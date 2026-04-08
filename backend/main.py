@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 import time
 import logging
+import os
 
 # Configure basic logging
 logging.basicConfig(level=logging.INFO)
@@ -45,16 +46,6 @@ async def log_requests(request: Request, call_next):
 from backend.routes import upload, query, auth, documents, notes
 from backend.database.postgres import engine, Base
 
-# Create tables in DB
-Base.metadata.create_all(bind=engine)
-
-# Include Routes
-app.include_router(auth.router)
-app.include_router(upload.router)
-app.include_router(query.router)
-app.include_router(documents.router)
-app.include_router(notes.router)
-
 @app.get("/")
 async def root():
     return {"message": "Welcome to DocuMind AI API", "status": "online"}
@@ -65,6 +56,28 @@ async def health():
 
 @app.on_event("startup")
 async def startup_event():
+    # Create tables in DB during startup, not import
+    try:
+        logger.info("Initializing database tables...")
+        if engine:
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database tables initialized successfully.")
+        else:
+            logger.error("Database engine not initialized.")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}")
+
     logger.info("Listing all registered routes:")
     for route in app.routes:
-        logger.info(f"Route: {route.path} | Methods: {route.methods}")
+        methods = getattr(route, "methods", [])
+        logger.info(f"Route: {route.path} | Methods: {methods}")
+
+    port = os.getenv("PORT", "10000")
+    logger.info(f"App is starting on port {port}...")
+
+# Include Routes after startup logic is defined (though order doesn't strictly matter for events)
+app.include_router(auth.router)
+app.include_router(upload.router)
+app.include_router(query.router)
+app.include_router(documents.router)
+app.include_router(notes.router)

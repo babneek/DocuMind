@@ -5,6 +5,15 @@ import chromadb
 from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 
+# Support for older sqlite systems (like Render/Linux)
+try:
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+    print("[VectorDB] Swapped sqlite3 for pysqlite3-binary")
+except ImportError:
+    pass
+
 # Add parent directory to path
 sys.path.insert(0, str(__file__).replace('\\', '/').rsplit('/', 2)[0])
 
