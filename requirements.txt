@@ -1,5 +1,4 @@
 # Core
-streamlit
 fastapi
 uvicorn
 python-dotenv
@@ -10,7 +9,12 @@ pysqlite3-binary
 # AI / ML
 openai
 chromadb
+
+# Use CPU-only torch to avoid downloading ~2GB of CUDA libraries on Render
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
 sentence-transformers
+
 pypdf
 python-docx
 ebooklib

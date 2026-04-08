@@ -1,9 +1,6 @@
 import os
 import sys
 import time
-import chromadb
-from chromadb.config import Settings
-from sentence_transformers import SentenceTransformer
 
 # Support for older sqlite systems (like Render/Linux)
 try:
@@ -29,14 +26,31 @@ class VectorDB:
             # Use absolute path relative to backend/ directory
             persist_directory = os.path.join(os.path.dirname(os.path.dirname(__file__)), "chroma_data")
         self.persist_directory = persist_directory
-        self.client = chromadb.PersistentClient(path=self.persist_directory)
+        # Lazy-init: don't create chromadb client until first use
+        self._client = None
+        self._collection = None
         self.collection_name = "documind_collection"
-        self.collection = self.client.get_or_create_collection(name=self.collection_name)
 
         self.model_name = os.getenv("SENTENCE_TRANSFORMER_MODEL", "all-MiniLM-L6-v2")
         self.embedder = None
         self.embeddings_available = False
         self._embedder_loaded = False
+
+    @property
+    def client(self):
+        """Lazy-load ChromaDB client on first access."""
+        if self._client is None:
+            import chromadb
+            print("[VectorDB] Initializing ChromaDB client...")
+            self._client = chromadb.PersistentClient(path=self.persist_directory)
+        return self._client
+
+    @property
+    def collection(self):
+        """Lazy-load ChromaDB collection on first access."""
+        if self._collection is None:
+            self._collection = self.client.get_or_create_collection(name=self.collection_name)
+        return self._collection
 
     def _ensure_embedder(self):
         if self._embedder_loaded:
@@ -44,6 +58,7 @@ class VectorDB:
 
         self._embedder_loaded = True
         try:
+            from sentence_transformers import SentenceTransformer
             self.embedder = SentenceTransformer(self.model_name)
             self.embeddings_available = True
             print(f"[VectorDB] Loaded embedding model: {self.model_name}")
