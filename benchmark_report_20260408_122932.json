@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-04-08T12:29:32.230071",
+  "overall_accuracy": 0,
+  "latency_stats": {
+    "mean": 2045.2851295471191,
+    "median": 2042.8745746612549,
+    "min": 2027.2305011749268,
+    "max": 2065.1087760925293
+  },
+  "category_results": {
+    "easy": {
+      "scores": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "avg": 0
+    },
+    "medium": {
+      "scores": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "avg": 0
+    },
+    "hard": {
+      "scores": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "avg": 0
+    },
+    "edge_case": {
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg": 0
+    }
+  },
+  "queries_count": 15
+}

@@ -1,0 +1,38 @@
+# Core
+streamlit
+fastapi
+uvicorn
+python-dotenv
+requests
+beautifulsoup4
+pysqlite3-binary
+
+# AI / ML
+openai
+chromadb
+sentence-transformers
+pypdf
+python-docx
+ebooklib
+lxml
+wikipedia
+
+# PageIndex / document reasoning
+litellm==1.82.0
+pymupdf==1.26.4
+PyPDF2==3.0.1
+pyyaml==6.0.2
+
+# Database & Background Tasks
+sqlalchemy
+psycopg2-binary
+celery
+redis
+
+# Security
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+
+# Monitoring (optional but for later)
+prometheus_client

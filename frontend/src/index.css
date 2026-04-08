@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 228 50% 6%;
+    --foreground: 210 40% 92%;
+
+    --card: 225 40% 10%;
+    --card-foreground: 210 40% 92%;
+
+    --popover: 225 40% 10%;
+    --popover-foreground: 210 40% 92%;
+
+    --primary: 187 94% 43%;
+    --primary-foreground: 228 50% 6%;
+
+    --secondary: 225 30% 16%;
+    --secondary-foreground: 210 40% 85%;
+
+    --muted: 225 25% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 260 70% 58%;
+    --accent-foreground: 210 40% 95%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 225 20% 18%;
+    --input: 225 20% 18%;
+    --ring: 187 94% 43%;
+
+    --radius: 0.75rem;
+
+    --glass-bg: 225 40% 12% / 0.6;
+    --glass-border: 225 20% 25% / 0.3;
+    --glow-primary: 187 94% 43% / 0.15;
+    --glow-accent: 260 70% 58% / 0.1;
+
+    --sidebar-background: 225 40% 8%;
+    --sidebar-foreground: 210 40% 85%;
+    --sidebar-primary: 187 94% 43%;
+    --sidebar-primary-foreground: 228 50% 6%;
+    --sidebar-accent: 225 30% 16%;
+    --sidebar-accent-foreground: 210 40% 85%;
+    --sidebar-border: 225 20% 18%;
+    --sidebar-ring: 187 94% 43%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-card/60 backdrop-blur-xl border border-border/30 rounded-xl;
+  }
+  .glass-panel-hover {
+    @apply glass-panel transition-all duration-300 hover:bg-card/80 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5;
+  }
+  .glow-text {
+    @apply text-primary drop-shadow-[0_0_12px_hsl(var(--primary)/0.4)];
+  }
+  .gradient-mesh {
+    background: 
+      radial-gradient(ellipse at 20% 50%, hsl(var(--glow-primary)) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, hsl(var(--glow-accent)) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, hsl(187 94% 43% / 0.05) 0%, transparent 50%);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+  }
+}
