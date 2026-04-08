@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
-from database.postgres import Base
+from backend.database.postgres import Base
 
 class Note(Base):
     __tablename__ = "notes"

@@ -5,16 +5,14 @@ __pycache__/
 *.pyc
 
 # Data
-chroma_data/
-documind.db
-uploads/
-
-# Scraper output
-wikisource_text.txt
-wikisource_screenshot.png
+**/chroma_data/
+**/documind.db
+**/uploads/
+**/output.txt
+**/frontend_output.txt
 
 # Secrets
-.env
+**/.env
 
 # IDE
 .vscode/

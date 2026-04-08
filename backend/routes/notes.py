@@ -11,12 +11,12 @@ import time
 # Add parent directory to path so we can import from root-level modules
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from database.postgres import get_db
-from models.note import Note
-from models.user import User
+from backend.database.postgres import get_db
+from backend.models.note import Note
+from backend.models.user import User
 from .auth import get_current_user
-from services.llm_service import LLMService
-from services.cache_service import CacheManager
+from backend.services.llm_service import LLMService
+from backend.services.cache_service import CacheManager
 
 logger = logging.getLogger("documind")
 cache_manager = CacheManager()

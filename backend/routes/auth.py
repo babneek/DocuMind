@@ -11,8 +11,8 @@ from pathlib import Path
 # Add parent directory to path so we can import from root-level modules
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from database.postgres import get_db
-from models.user import User, UserRole
+from backend.database.postgres import get_db
+from backend.models.user import User, UserRole
 
 # Configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-it-in-prod")

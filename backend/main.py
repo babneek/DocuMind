@@ -42,8 +42,8 @@ async def log_requests(request: Request, call_next):
         )
 
 # Standard init
-from routes import upload, query, auth, documents, notes
-from database.postgres import engine, Base
+from backend.routes import upload, query, auth, documents, notes
+from backend.database.postgres import engine, Base
 
 # Create tables in DB
 Base.metadata.create_all(bind=engine)

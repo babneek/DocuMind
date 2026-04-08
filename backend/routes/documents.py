@@ -5,11 +5,11 @@ from pathlib import Path
 # Add parent directory to path so we can import from root-level modules
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from database.postgres import get_db
-from models.document import Document
-from database.vector_db import VectorDB
+from backend.database.postgres import get_db
+from backend.models.document import Document
+from backend.database.vector_db import VectorDB
 from .auth import get_current_user
-from models.user import User
+from backend.models.user import User
 
 router = APIRouter(prefix="/api/documents", tags=["Documents"])
 vector_db = VectorDB()

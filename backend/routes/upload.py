@@ -7,12 +7,12 @@ from pathlib import Path
 # Add parent directory to path so we can import from root-level modules
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from database.postgres import get_db, SessionLocal
-from models.document import Document
-from services.ingestion_service import IngestionService
-from database.vector_db import VectorDB
+from backend.database.postgres import get_db, SessionLocal
+from backend.models.document import Document
+from backend.services.ingestion_service import IngestionService
+from backend.database.vector_db import VectorDB
 from .auth import get_current_user
-from models.user import User
+from backend.models.user import User
 
 router = APIRouter(prefix="/api/upload", tags=["Upload"])
 ingestion_service = IngestionService()
@@ -20,10 +20,10 @@ vector_db = VectorDB()
 
 
 def _get_pageindex_service():
-    from services.pageindex_service import PageIndexService
+    from backend.services.pageindex_service import PageIndexService
     return PageIndexService()
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
