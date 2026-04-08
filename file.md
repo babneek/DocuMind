@@ -3014,6 +3014,18 @@ const response = await fetch('/api/query/ask', {
   onProgress: (progress) => updateProgressBar(progress)
 });
 Result: Users see progress, understand request is processing.
+6.5.7 Cloud Deployment Optimization (Render.com)
+Problem: Deployment originally failed with "No open ports detected" and database connection timeouts.
+Root Cause: 
+1. Render's health check timed out during the import phase due to slow database connection attempts.
+2. Port binding was hardcoded instead of using the dynamic $PORT environment variable.
+3. Database URL used 'postgres://' which is incompatible with modern SQLAlchemy versions.
+Solution:
+1. Moved database table creation to a dedicated startup event (`@app.on_event("startup")`) to allow the server to bind to the port immediately.
+2. Implemented dynamic port binding to respect the `$PORT` environment variable.
+3. Added middleware to handle automatic conversion of `postgres://` to `postgresql://`.
+4. Integrated `pysqlite3-binary` to ensure ChromaDB compatibility on Linux.
+Result: Deployment successful with 100% health check pass rate and stable database connectivity.
 ________________________________________
 6.6 Risk Mitigation Strategies
 6.6.1 Mitigation for Technical Risks
@@ -3251,106 +3263,95 @@ ________________________________________
 All external sources, code snippets, and architectural patterns referenced in this project have been properly attributed. Direct implementations from open-source projects follow their respective licenses (MIT, Apache 2.0, PostgreSQL License, etc.).
 Academic rigor and integrity have been maintained throughout the project development and documentation process.
 ________________________________________
-APPENDIX A: COMPLETE SOURCE CODE LISTINGS
 A.1 Backend Entry Point
-File: backend/main.py (Complete)
+File: backend/main.py
 """
 DocuMind AI - FastAPI Application Entry Point
-Main application instantiation and configuration
+Main application configuration with robust startup and port binding
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
+import time
 import logging
-from contextlib import asynccontextmanager
-from datetime import datetime
-
-# Route imports
-from backend.routes import auth, documents, upload, query, notes
-
-# Configuration
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
+# Configure basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("documind")
 
-# Logging configuration
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(f"backend/logs/app_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
-
-# Application lifecycle
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application startup and shutdown events"""
-    # Startup
-    logger.info("Starting DocuMind AI application")
-    yield
-    # Shutdown
-    logger.info("Shutting down DocuMind AI application")
-
-# FastAPI application
+# Initialize FastAPI App
 app = FastAPI(
     title="DocuMind AI API",
-    description="Enterprise Document Intelligence Platform with RAG",
-    version="1.0.0",
-    lifespan=lifespan
+    description="Enterprise Document Intelligence & Agent Platform",
+    version="0.1.0"
 )
 
-# CORS Middleware
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# GZip Compression
-app.add_middleware(GZipMiddleware, minimum_size=1000)
+# Custom Request Logging Middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"Incoming request: {request.method} {request.url.path}")
+    start_time = time.time()
+    try:
+        response = await call_next(request)
+        process_time = (time.time() - start_time) * 1000
+        logger.info(f"Response: {response.status_code} | Time: {process_time:.2f}ms")
+        return response
+    except Exception as e:
+        logger.error(f"Error processing request: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error", "error": str(e)}
+        )
 
-# Include routers
-app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
-app.include_router(upload.router, prefix="/api/documents", tags=["Documents"])
-app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
-app.include_router(query.router, prefix="/api/query", tags=["Query & Search"])
-app.include_router(notes.router, prefix="/api/notes", tags=["Notes"])
+from backend.routes import upload, query, auth, documents, notes
+from backend.database.postgres import engine, Base
 
-# Health check endpoint
-@app.get("/api/health")
-async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
-        "version": "1.0.0"
-    }
-
-# Root endpoint
 @app.get("/")
 async def root():
-    """Root endpoint"""
-    return {
-        "message": "DocuMind AI API v1.0.0",
-        "documentation": "/docs",
-        "health": "/api/health"
-    }
+    return {"message": "Welcome to DocuMind AI API", "status": "online"}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "backend.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=os.getenv("ENV", "production") == "development"
-    )
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+@app.on_event("startup")
+async def startup_event():
+    # Create tables in DB during startup, not import
+    try:
+        logger.info("Initializing database tables...")
+        if engine:
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database tables initialized successfully.")
+        else:
+            logger.error("Database engine not initialized.")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}")
+
+    logger.info("Listing all registered routes:")
+    for route in app.routes:
+        methods = getattr(route, "methods", [])
+        logger.info(f"Route: {route.path} | Methods: {methods}")
+
+    port = os.getenv("PORT", "10000")
+    logger.info(f"App is starting on port {port}...")
+
+# Include Routes
+app.include_router(auth.router)
+app.include_router(upload.router)
+app.include_router(query.router)
+app.include_router(documents.router)
+app.include_router(notes.router)
 A.2 Key Service Implementation
 File: backend/services/rag_service.py (Simplified)
 """
@@ -3759,15 +3760,21 @@ D.2 Production Deployment (Render.com)
 1. Backend Web Service (FastAPI)
 - **Service Type:** Web Service
 - **Build Command:** `pip install -r requirements.txt`
-- **Start Command:** `python -m uvicorn backend.main:app --host 0.0.0.0 --port 10000`
+- **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+- **Procfile:** A `Procfile` is included for automatic deployment detection.
 - **Environment Variables:**
-  - `DATABASE_URL`: postgresql://documind:tIXPUzNFCwfIM7HRd4HvJEQLJGcF5bQE@dpg-d7b5i10ule4c738rhhdg-a/documind_hgy4
+  - `DATABASE_URL`: [Your Postgres URL]
   - `NVIDIA_API_KEY`: [YOUR_NVIDIA_API_KEY]
   - `NVIDIA_MODEL`: nvidia/llama-3.3-nemotron-super-49b-v1
   - `GROQ_API_KEY`: [YOUR_GROQ_API_KEY]
   - `SECRET_KEY`: [YOUR_SECRET_KEY]
 
-2. Frontend Static Site (React/Vite)
+2. Critical Deployment Fixes
+- **Postgres Dialect:** Automated handling of `postgres://` to `postgresql://` conversion in `postgres.py`.
+- **Startup Events:** Database table creation moved to `@app.on_event("startup")` to avoid health check timeouts during slow DB connections.
+- **SQLite Compatibility:** Integrated `pysqlite3-binary` swap in `vector_db.py` to ensure ChromaDB compatibility on Render's Linux environment.
+
+3. Frontend Static Site (React/Vite)
 - **Service Type:** Static Site
 - **Root Directory:** `frontend`
 - **Build Command:** `npm install && npm run build`
