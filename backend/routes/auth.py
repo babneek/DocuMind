@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-it-in-prod")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 # 1 day
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
@@ -32,11 +32,15 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
+def get_password_hash(password: str) -> str:
+    # Truncate to 72 bytes to avoid bcrypt limitation
+    password_bytes = password.encode("utf-8")[:72]
+    return pwd_context.hash(password_bytes.decode("utf-8", errors="ignore"))
 
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    # Truncate to 72 bytes to match hashing
+    password_bytes = plain_password.encode("utf-8")[:72]
+    return pwd_context.verify(password_bytes.decode("utf-8", errors="ignore"), hashed_password)
 
 def create_access_token(data: dict):
     to_encode = data.copy()
