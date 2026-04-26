@@ -12,8 +12,8 @@ interface NavShellProps {
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "documents", label: "Documents", icon: FileText },
-  { id: "query", label: "AI Query", icon: MessageSquare },
-  { id: "notes", label: "Notes", icon: BookOpen },
+  { id: "query", label: "Legal AI", icon: MessageSquare },
+  { id: "notes", label: "Research Notes", icon: BookOpen },
 ];
 
 const NavShell = ({ currentView, onNavigate, onLogout, children }: NavShellProps) => {
@@ -26,7 +26,7 @@ const NavShell = ({ currentView, onNavigate, onLogout, children }: NavShellProps
         <div className="flex items-center justify-between px-6 h-16">
           <div className="flex items-center gap-3">
             <Brain className="w-7 h-7 text-primary animate-pulse-glow" />
-            <span className="font-heading font-bold text-lg text-foreground">DocuMind</span>
+            <span className="font-heading font-bold text-lg text-foreground">LexMind AI</span>
           </div>
 
           <nav className="hidden md:flex items-center gap-1">

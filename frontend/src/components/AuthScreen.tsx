@@ -53,7 +53,7 @@ const AuthScreen = ({ onLogin }: AuthScreenProps) => {
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <Brain className="w-10 h-10 text-primary animate-pulse-glow" />
-          <h1 className="font-heading text-3xl font-bold text-foreground">DocuMind</h1>
+          <h1 className="font-heading text-3xl font-bold text-foreground">LexMind AI</h1>
         </div>
 
         <div className="glass-panel p-8">
@@ -61,7 +61,7 @@ const AuthScreen = ({ onLogin }: AuthScreenProps) => {
             {isLogin ? "Welcome back" : "Create account"}
           </h2>
           <p className="text-sm text-muted-foreground mb-6">
-            {isLogin ? "Sign in to your workspace" : "Get started with DocuMind AI"}
+            {isLogin ? "Sign in to your legal workspace" : "Get started with LexMind AI Legal Assistant"}
           </p>
 
           {error && (

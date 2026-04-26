@@ -98,7 +98,7 @@ const DocumentsView = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Documents</h1>
+          <h1 className="font-heading text-2xl font-bold text-foreground">Legal Documents</h1>
           <p className="text-sm text-muted-foreground mt-1">{docs.length} documents uploaded</p>
         </div>
         <div className="flex items-center gap-3">
@@ -144,7 +144,7 @@ const DocumentsView = () => {
             browse
           </button>
         </p>
-        <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, TXT, MD up to 50MB</p>
+        <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, TXT — Contracts, Agreements, Judgments, Petitions</p>
         <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.docx,.txt,.md" onChange={(e) => handleFileSelect(e.target.files)} />
       </motion.div>
 

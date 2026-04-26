@@ -2,33 +2,19 @@ import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-const api = axios.create({
-  baseURL: API_BASE,
-});
+const api = axios.create({ baseURL: API_BASE });
 
-// Add token to requests if available
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-export interface LoginData {
-  email: string;
-  password: string;
-}
+// ── Types ────────────────────────────────────────────────────────────────────
 
-export interface SignupData {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  access_token: string;
-  token_type: string;
-}
+export interface LoginData { email: string; password: string; }
+export interface SignupData { email: string; password: string; }
+export interface AuthResponse { access_token: string; token_type: string; }
 
 export interface Document {
   id: number;
@@ -48,97 +34,147 @@ export interface Note {
   updated_at: string;
 }
 
-export interface QueryRequest {
-  query: string;
+export interface QueryRequest { query: string; doc_id?: number; }
+
+export interface LegalSource {
+  type: 'document' | 'general_knowledge';
+  mode?: 'semantic' | 'structural';
   doc_id?: number;
+  chunk_index?: number;
+  relevance_score?: number;
+  note?: string;
 }
 
-export interface QueryResponse {
+export interface LegalQueryResponse {
   answer: string;
-  sources?: Array<Record<string, unknown>>;
+  sources: LegalSource[];
+  context_used: boolean;
+  context_blocks?: number;
 }
 
-// Auth
+export interface LegalSummaryResponse {
+  summary: string;
+  doc_name: string;
+}
+
+export interface ClauseResponse {
+  result: string;
+  clause_type: string;
+  doc_name: string;
+}
+
+export interface RiskResponse {
+  analysis: string;
+  doc_name: string;
+}
+
+export interface CompareResponse {
+  comparison: string;
+  doc1: string;
+  doc2: string;
+}
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+
 export const login = async (data: LoginData): Promise<AuthResponse> => {
   const formData = new URLSearchParams();
   formData.append('username', data.email);
   formData.append('password', data.password);
-  const response = await api.post('/api/auth/login', formData, {
+  const res = await api.post('/api/auth/login', formData, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   });
-  return response.data;
+  return res.data;
 };
 
 export const signup = async (data: SignupData): Promise<AuthResponse> => {
-  const response = await api.post('/api/auth/signup', data);
-  return response.data;
+  const res = await api.post('/api/auth/signup', data);
+  return res.data;
 };
 
-// Documents
+// ── Documents ────────────────────────────────────────────────────────────────
+
 export const getDocuments = async (): Promise<Document[]> => {
-  const response = await api.get('/api/documents/');
-  return response.data;
+  const res = await api.get('/api/documents/');
+  return res.data;
 };
 
 export const deleteDocument = async (docId: number): Promise<void> => {
   await api.delete(`/api/documents/${docId}`);
 };
 
-// Summary
-export const summarizeDocument = async (docId: number): Promise<{ summary: string }> => {
-  const response = await api.post('/api/query/summarize', { doc_id: docId });
-  return response.data;
-};
-
-// Upload
 export const uploadDocument = async (file: File): Promise<{ id: number; filename: string; status: string }> => {
   const formData = new FormData();
   formData.append('file', file);
-  console.log('[API] Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
-  const response = await api.post('/api/upload/', formData);
-  console.log('[API] Upload response:', response.data);
-  return response.data;
+  const res = await api.post('/api/upload/', formData);
+  return res.data;
 };
 
-// Notes
+// ── Legal Query Endpoints ────────────────────────────────────────────────────
+
+export const askLegalQuestion = async (data: QueryRequest): Promise<LegalQueryResponse> => {
+  const res = await api.post('/api/query/ask', data);
+  return res.data;
+};
+
+export const summarizeDocument = async (docId: number): Promise<LegalSummaryResponse> => {
+  const res = await api.post('/api/query/summarize', { doc_id: docId });
+  return res.data;
+};
+
+export const extractClause = async (docId: number, clauseType: string): Promise<ClauseResponse> => {
+  const res = await api.post('/api/query/extract-clause', { doc_id: docId, clause_type: clauseType });
+  return res.data;
+};
+
+export const analyzeRisks = async (docId: number): Promise<RiskResponse> => {
+  const res = await api.post('/api/query/analyze-risks', { doc_id: docId });
+  return res.data;
+};
+
+export const compareDocuments = async (docId1: number, docId2: number): Promise<CompareResponse> => {
+  const res = await api.post('/api/query/compare', { doc_id_1: docId1, doc_id_2: docId2 });
+  return res.data;
+};
+
+// ── Notes ────────────────────────────────────────────────────────────────────
+
 export const getNotes = async (): Promise<Note[]> => {
-  const response = await api.get('/api/notes/');
-  return response.data;
+  const res = await api.get('/api/notes/');
+  return res.data;
 };
 
 export const createNote = async (data: Pick<Note, 'title' | 'content'>): Promise<Note> => {
-  const response = await api.post('/api/notes/', data);
-  return response.data;
+  const res = await api.post('/api/notes/', data);
+  return res.data;
 };
 
 export const updateNote = async (noteId: number, data: Pick<Note, 'title' | 'content'>): Promise<Note> => {
-  const response = await api.put(`/api/notes/${noteId}`, data);
-  return response.data;
+  const res = await api.put(`/api/notes/${noteId}`, data);
+  return res.data;
 };
 
 export const deleteNote = async (noteId: number): Promise<void> => {
   await api.delete(`/api/notes/${noteId}`);
 };
 
-export const restructureNote = async (noteId: number, options?: { structureType?: string; customSections?: string; style?: string }): Promise<Note> => {
-  const response = await api.post(`/api/notes/${noteId}/restructure`, options || {});
-  return response.data;
+export const restructureNote = async (noteId: number, options?: {
+  structureType?: string; customSections?: string; style?: string;
+}): Promise<Note> => {
+  const res = await api.post(`/api/notes/${noteId}/restructure`, options || {});
+  return res.data;
 };
 
 export const extractStructure = async (noteId: number): Promise<any> => {
-  const response = await api.get(`/api/notes/${noteId}/structure`);
-  return response.data;
+  const res = await api.get(`/api/notes/${noteId}/structure`);
+  return res.data;
 };
 
 export const rebuildNote = async (noteId: number, sections: any[]): Promise<Note> => {
-  const response = await api.post(`/api/notes/${noteId}/rebuild`, { sections });
-  return response.data;
+  const res = await api.post(`/api/notes/${noteId}/rebuild`, { sections });
+  return res.data;
 };
 
-// Query
-export const askQuestion = async (data: QueryRequest): Promise<QueryResponse> => {
-  const response = await api.post('/api/query/ask', data);
-  return response.data;
-};
+// legacy alias
+export const askQuestion = askLegalQuestion;
 
 export default api;

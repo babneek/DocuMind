@@ -21,7 +21,7 @@ const Index = () => {
 
   return (
     <NavShell currentView={currentView} onNavigate={setCurrentView} onLogout={handleLogout}>
-      {currentView === "dashboard" && <DashboardView />}
+      {currentView === "dashboard" && <DashboardView onNavigate={setCurrentView} />}
       {currentView === "documents" && <DocumentsView />}
       {currentView === "query" && <QueryView />}
       {currentView === "notes" && <NotesView />}
