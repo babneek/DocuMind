@@ -18,7 +18,11 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://docu-mind-swart.vercel.app",
+        "http://localhost:8080",  # For local development
+        "http://localhost:5173",  # Vite default port
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
