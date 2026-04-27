@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Brain, Search, Upload, LogOut, LayoutDashboard, MessageSquare, Menu, X, BookOpen, Database } from "lucide-react";
+import { FileText, Brain, Search, Upload, LogOut, LayoutDashboard, MessageSquare, Menu, X, BookOpen, Database, Scale } from "lucide-react";
 
 interface NavShellProps {
   currentView: string;
@@ -15,6 +15,7 @@ const navItems = [
   { id: "query", label: "Legal AI", icon: MessageSquare },
   { id: "notes", label: "Research Notes", icon: BookOpen },
   { id: "caselaw", label: "Case Law DB", icon: Database },
+  { id: "tracker", label: "Case Tracker", icon: Scale },
 ];
 
 const NavShell = ({ currentView, onNavigate, onLogout, children }: NavShellProps) => {

@@ -48,6 +48,7 @@ async def log_requests(request: Request, call_next):
 
 # Standard init
 from backend.routes import upload, query, auth, documents, notes
+from backend.routes.case_tracker import router as case_tracker_router
 from backend.database.postgres import engine, Base
 
 @app.get("/")
@@ -85,3 +86,4 @@ app.include_router(upload.router)
 app.include_router(query.router)
 app.include_router(documents.router)
 app.include_router(notes.router)
+app.include_router(case_tracker_router)

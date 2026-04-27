@@ -281,4 +281,87 @@ export const getAvailableDomains = async (): Promise<AvailableDomainsResponse> =
   return res.data;
 };
 
+// ── Case Tracker Endpoints ────────────────────────────────────────────────────
+
+export interface CaseTrackerResult {
+  success: boolean;
+  cnr_number?: string;
+  case_type?: string;
+  case_title?: string;
+  case_status?: string;
+  case_stage?: string;
+  court?: string;
+  court_number?: string;
+  judge?: string;
+  filing_number?: string;
+  filing_date?: string;
+  registration_number?: string;
+  registration_date?: string;
+  first_hearing_date?: string;
+  next_hearing_date?: string;
+  decision_date?: string | null;
+  nature_of_disposal?: string;
+  petitioner?: string;
+  petitioner_advocate?: string;
+  respondents?: string[];
+  hearing_history?: HearingEntry[];
+  error?: string;
+  message?: string;
+  source?: string;
+}
+
+export interface HearingEntry {
+  date: string;
+  next_date?: string;
+  purpose: string;
+  judge?: string;
+  court_number?: string;
+}
+
+export interface UpcomingHearingsResult {
+  cnr_number: string;
+  case_title: string;
+  case_status: string;
+  court: string;
+  judge: string;
+  today: HearingEntry[];
+  this_week: HearingEntry[];
+  this_month: HearingEntry[];
+  next_hearing: string | null;
+  all_upcoming: HearingEntry[];
+  hearing_history: HearingEntry[];
+  error?: string;
+}
+
+export interface CourtInfo {
+  id: string;
+  name: string;
+  url: string;
+}
+
+export const searchByCNR = async (cnr_number: string): Promise<CaseTrackerResult> => {
+  const res = await api.post('/api/cases/search-cnr', { cnr_number });
+  return res.data;
+};
+
+export const searchByCaseNumber = async (data: {
+  case_type: string;
+  case_number: string;
+  year: string;
+  court: string;
+}): Promise<CaseTrackerResult> => {
+  const res = await api.post('/api/cases/search-number', data);
+  return res.data;
+};
+
+export const getUpcomingHearings = async (cnr_number: string, days = 30): Promise<UpcomingHearingsResult> => {
+  const res = await api.get(`/api/cases/upcoming/${cnr_number}`, { params: { days } });
+  return res.data;
+};
+
+export const getSupportedCourts = async (): Promise<{ courts: CourtInfo[] }> => {
+  const res = await api.get('/api/cases/courts');
+  return res.data;
+};
+
 export default api;
