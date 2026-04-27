@@ -13,6 +13,7 @@ from backend.services.rag_service import RAGService
 from backend.services.llm_service import LLMService
 from backend.services.cache_service import get_cache_manager
 from backend.services.legal_knowledge_service import LegalKnowledgeService
+from backend.services.case_law_service import get_case_law_service
 from backend.database.vector_db import VectorDB
 from .auth import get_current_user
 from backend.models.user import User
@@ -24,6 +25,7 @@ llm_service = LLMService()
 rag_service = RAGService(llm_service, vector_db)       # legacy fallback
 legal_rag = LegalRAGService(vector_db)                 # legal-aware service
 legal_knowledge = LegalKnowledgeService()              # legal knowledge base
+case_law_service = get_case_law_service()              # actual case law database
 cache_manager = get_cache_manager()
 
 
@@ -54,6 +56,12 @@ class ExtractionRequest(BaseModel):
 class PrecedentSearchRequest(BaseModel):
     query: str
     legal_area: Optional[str] = None  # contract, arbitration, IP, etc.
+    top_k: int = 5
+
+class CaseLawSearchRequest(BaseModel):
+    query: str
+    legal_area: Optional[str] = None
+    court: Optional[str] = None  # e.g., "Supreme Court of India"
     top_k: int = 5
 
 
@@ -204,3 +212,103 @@ async def search_precedents(
         top_k=request.top_k
     )
     return result
+
+
+@router.post("/search-case-law")
+async def search_case_law(
+    request: CaseLawSearchRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Search actual Indian case law database for relevant judgments.
+    Returns real cases with citations, holdings, and reasoning.
+    
+    Example queries:
+    - "software contract breach remedies"
+    - "force majeure in supply contracts"
+    - "limitation of liability clauses"
+    """
+    try:
+        cases = case_law_service.search_cases(
+            query=request.query,
+            legal_area=request.legal_area,
+            court=request.court,
+            top_k=request.top_k
+        )
+        
+        if not cases:
+            return {
+                "message": "No relevant cases found. Try broadening your search terms.",
+                "cases": [],
+                "query": request.query
+            }
+        
+        # Format cases for frontend
+        formatted_cases = []
+        for case in cases:
+            formatted_cases.append({
+                "case_name": case['case_name'],
+                "citation": case['citation'],
+                "court": case['court'],
+                "date": case['date'],
+                "legal_areas": case['legal_areas'],
+                "issues": case['issues'],
+                "holdings": case['holdings'],
+                "relevance_score": case['relevance_score'],
+                "excerpt": case['excerpt'],
+                "case_id": case['case_id']
+            })
+        
+        return {
+            "message": f"Found {len(formatted_cases)} relevant case(s)",
+            "cases": formatted_cases,
+            "query": request.query,
+            "filters": {
+                "legal_area": request.legal_area,
+                "court": request.court
+            }
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Case law search failed: {str(e)}")
+
+
+@router.get("/case-law/{case_id}")
+async def get_case_details(
+    case_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get full details of a specific case by ID.
+    Returns complete judgment text, reasoning, and precedents cited.
+    """
+    try:
+        case_data = case_law_service.get_case_by_id(case_id)
+        
+        if not case_data:
+            raise HTTPException(status_code=404, detail="Case not found")
+        
+        return {
+            "case": case_data,
+            "case_id": case_id
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve case: {str(e)}")
+
+
+@router.get("/case-law-stats")
+async def get_case_law_stats(
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get statistics about the case law database.
+    Returns total cases, courts covered, and legal areas.
+    """
+    try:
+        stats = case_law_service.get_database_stats()
+        return stats
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")

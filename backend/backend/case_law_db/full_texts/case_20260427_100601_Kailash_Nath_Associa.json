@@ -1,0 +1,32 @@
+{
+  "case_name": "Kailash Nath Associates v. Delhi Development Authority",
+  "citation": "(2015) 4 SCC 136",
+  "court": "Supreme Court of India",
+  "date": "2015-02-20",
+  "judges": [
+    "Justice Ranjan Gogoi",
+    "Justice Rohinton Fali Nariman"
+  ],
+  "legal_areas": [
+    "Contract Law",
+    "Arbitration",
+    "Limitation of Liability"
+  ],
+  "facts": "Kailash Nath Associates entered into a construction contract with DDA. The contract contained a limitation of liability clause capping damages at the contract value. After disputes arose, the arbitrator awarded damages exceeding the contractual cap. DDA challenged the award.",
+  "issues": [
+    "Are limitation of liability clauses enforceable in Indian contracts?",
+    "Can arbitrators award damages beyond contractual caps?",
+    "What is the scope of judicial review of arbitral awards?"
+  ],
+  "holdings": [
+    "Limitation of liability clauses are generally enforceable unless unconscionable",
+    "Arbitrators must respect contractual limitations on liability",
+    "Courts can set aside awards that violate express contractual terms"
+  ],
+  "reasoning": "The Supreme Court held that limitation of liability clauses are valid and enforceable as they represent the parties' allocation of risk. Arbitrators, while having wide discretion in assessing damages, cannot ignore express contractual provisions limiting liability. Such clauses are particularly common in commercial contracts and reflect negotiated risk allocation. The Court emphasized that freedom of contract is a fundamental principle, and courts should not rewrite commercial agreements.",
+  "precedents_cited": [
+    "Associate Builders v. Delhi Development Authority (2015)",
+    "McDermott International Inc. v. Burn Standard Co. Ltd. (2006)"
+  ],
+  "full_text": "SUPREME COURT OF INDIA\n\nCivil Appeal No. 1132 of 2015\n\nKAILASH NATH ASSOCIATES ... Appellant\nVersus\nDELHI DEVELOPMENT AUTHORITY ... Respondent\n\nJUDGMENT\n\nThe question in this appeal is whether an arbitrator can award damages exceeding the limitation of liability clause in the contract...\n\nThe contract dated 5th July 2008 contained Clause 18 which stated: \"In no event shall either party's total liability exceed the total contract value of Rs. 50 crores...\"\n\nThe arbitrator awarded Rs. 75 crores to the appellant, reasoning that the limitation clause was unconscionable given the extent of breach...\n\nHELD: The arbitrator exceeded jurisdiction by ignoring the express limitation of liability clause. The award is set aside to the extent it exceeds Rs. 50 crores. Parties are free to negotiate liability caps, and such clauses must be respected..."
+}

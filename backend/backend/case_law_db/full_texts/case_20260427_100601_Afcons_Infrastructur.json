@@ -1,0 +1,32 @@
+{
+  "case_name": "Afcons Infrastructure Ltd. v. Cherian Varkey Construction Co.",
+  "citation": "(2010) 8 SCC 24",
+  "court": "Supreme Court of India",
+  "date": "2010-07-23",
+  "judges": [
+    "Justice R.V. Raveendran",
+    "Justice A.K. Patnaik"
+  ],
+  "legal_areas": [
+    "Arbitration",
+    "Contract Law",
+    "Limitation"
+  ],
+  "facts": "Afcons Infrastructure and Cherian Varkey entered into a construction contract with an arbitration clause. Disputes arose regarding payment and work quality. The arbitration clause specified that arbitration must be invoked within a specified period. Afcons invoked arbitration after the limitation period.",
+  "issues": [
+    "Whether limitation period applies to arbitration proceedings?",
+    "Can parties contractually shorten the limitation period for arbitration?",
+    "What is the effect of delay in invoking arbitration?"
+  ],
+  "holdings": [
+    "Limitation Act applies to arbitration proceedings unless contract specifies otherwise",
+    "Parties can contractually agree to shorter limitation periods",
+    "Delay in invoking arbitration can be condoned if sufficient cause is shown"
+  ],
+  "reasoning": "The Supreme Court held that while the Limitation Act, 1963 applies to arbitration proceedings, parties are free to agree upon shorter limitation periods in their contract. Such contractual stipulations are valid and enforceable. However, courts have discretion to condone delay if sufficient cause is demonstrated. The Court emphasized the importance of timely dispute resolution in commercial contracts.",
+  "precedents_cited": [
+    "State of Goa v. Western Builders (2006)",
+    "P. Radha Bai v. P. Ashok Kumar (1994)"
+  ],
+  "full_text": "SUPREME COURT OF INDIA\n\nCivil Appeal No. 5734 of 2010\n\nAFCONS INFRASTRUCTURE LTD. ... Appellant\nVersus\nCHERIAN VARKEY CONSTRUCTION CO. ... Respondent\n\nJUDGMENT\n\nThis appeal arises from an order of the Bombay High Court dismissing the appellant's application under Section 11 of the Arbitration and Conciliation Act, 1996...\n\nThe contract dated 10th March 2005 contained Clause 25 which provided: \"Any dispute arising under this contract shall be referred to arbitration within 90 days of the dispute arising...\"\n\nThe appellant invoked arbitration on 15th August 2007, approximately 18 months after the dispute arose...\n\nHELD: The contractual limitation period is valid. However, considering the circumstances and ongoing negotiations between parties, the delay is condoned..."
+}

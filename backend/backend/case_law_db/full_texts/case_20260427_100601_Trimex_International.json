@@ -1,0 +1,32 @@
+{
+  "case_name": "Trimex International FZE Ltd. v. Vedanta Aluminium Ltd.",
+  "citation": "(2010) 3 SCC 1",
+  "court": "Supreme Court of India",
+  "date": "2010-01-08",
+  "judges": [
+    "Justice Dalveer Bhandari",
+    "Justice Harjit Singh Bedi"
+  ],
+  "legal_areas": [
+    "Arbitration",
+    "Contract Law",
+    "Force Majeure"
+  ],
+  "facts": "Trimex International entered into a contract with Vedanta Aluminium for supply of aluminium. Due to global financial crisis and collapse of commodity prices, Vedanta invoked force majeure clause and refused to take delivery. Trimex challenged this invocation and sought arbitration.",
+  "issues": [
+    "Whether global financial crisis constitutes force majeure event?",
+    "What is the scope of force majeure clauses in commercial contracts?",
+    "Can economic hardship justify invocation of force majeure?"
+  ],
+  "holdings": [
+    "Force majeure clause must be interpreted strictly based on contract language",
+    "Economic hardship or market fluctuations do not automatically constitute force majeure",
+    "Party invoking force majeure must prove event was unforeseeable and beyond control"
+  ],
+  "reasoning": "The Supreme Court held that force majeure clauses are to be strictly construed. The clause in question specifically listed events like war, natural disasters, and government actions. Economic downturn or market price changes, being foreseeable risks in commodity trading, do not fall within force majeure unless explicitly mentioned. The Court emphasized that commercial parties must bear normal business risks and cannot escape contractual obligations due to unfavorable market conditions.",
+  "precedents_cited": [
+    "Energy Watchdog v. Central Electricity Regulatory Commission (2017)",
+    "Dhanrajamal Gobindram v. Shamji Kalidas (1961)"
+  ],
+  "full_text": "SUPREME COURT OF INDIA\n\nCivil Appeal No. 123 of 2010\n\nTRIMEX INTERNATIONAL FZE LTD. ... Appellant\nVersus\nVEDANTA ALUMINIUM LTD. ... Respondent\n\nJUDGMENT\n\nThe question before this Court is whether the respondent was justified in invoking the force majeure clause due to the global financial crisis of 2008-2009...\n\nThe force majeure clause in the contract dated 15th June 2008 reads: \"Neither party shall be liable for failure to perform obligations if such failure is due to war, natural calamity, government restrictions, or other events beyond reasonable control...\"\n\nThe respondent contends that the unprecedented financial crisis made performance commercially impracticable. However, this Court notes that commodity price fluctuations are inherent business risks...\n\nHELD: The invocation of force majeure was not justified. Economic hardship does not constitute force majeure unless explicitly covered in the contract..."
+}

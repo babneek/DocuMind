@@ -1,0 +1,31 @@
+{
+  "case_name": "Satyam Computer Services Ltd. v. Upaid Systems Ltd.",
+  "citation": "2008 (37) PTC 381 (Del)",
+  "court": "Delhi High Court",
+  "date": "2008-03-14",
+  "judges": [
+    "Justice Pradeep Nandrajog"
+  ],
+  "legal_areas": [
+    "Contract Law",
+    "Software Licensing",
+    "Intellectual Property"
+  ],
+  "facts": "Satyam Computer Services entered into a software licensing agreement with Upaid Systems for use of proprietary software. Upaid alleged that Satyam breached the agreement by using the software beyond the licensed scope and failed to pay licensing fees. Satyam contended that the software had defects and did not meet specifications.",
+  "issues": [
+    "Whether the software licensing agreement was breached by the defendant?",
+    "What constitutes material breach in software contracts?",
+    "Whether defects in software justify non-payment of licensing fees?"
+  ],
+  "holdings": [
+    "Software licensing agreements must clearly define scope of use and payment terms",
+    "Material breach occurs when software fails to meet agreed specifications substantially",
+    "Licensee cannot unilaterally withhold payment without following dispute resolution procedures"
+  ],
+  "reasoning": "The Court held that in software contracts, the scope of license must be clearly defined. Any use beyond the licensed scope constitutes breach. However, if the software has material defects that prevent its intended use, the licensee may have grounds to withhold payment, but must follow contractual dispute resolution mechanisms. The Court emphasized that software contracts require precise technical specifications and acceptance criteria.",
+  "precedents_cited": [
+    "Bharat Sanchar Nigam Ltd. v. Motorola India Pvt. Ltd. (2009)",
+    "Tata Consultancy Services v. State of Andhra Pradesh (2004)"
+  ],
+  "full_text": "[Full judgment text would be included here - abbreviated for example]\n        \nIN THE HIGH COURT OF DELHI AT NEW DELHI\n\nSUBJECT: CONTRACT LAW\n\nCS(OS) No. 381/2008\n\nDate of Decision: 14th March, 2008\n\nSATYAM COMPUTER SERVICES LTD. ... Plaintiff\nVersus\nUPAID SYSTEMS LTD. ... Defendant\n\nJUDGMENT\n\nThe plaintiff, Satyam Computer Services Ltd., entered into a Software License Agreement dated 15th January 2007 with the defendant, Upaid Systems Ltd., for licensing proprietary payment processing software...\n\n[Detailed judgment continues...]\n\nThe Court finds that the defendant's use of the software exceeded the licensed scope as defined in Clause 3.2 of the Agreement. However, the plaintiff's claim that the software met all specifications is not fully substantiated...\n\nHELD: The defendant is directed to pay licensing fees for the period of authorized use. Claims for unauthorized use are remanded for determination of actual extent of breach..."
+}

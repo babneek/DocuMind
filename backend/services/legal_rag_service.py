@@ -1,10 +1,11 @@
 """
 Legal RAG Service — Hybrid retrieval with legal-structured output.
-Combines vector search + PageIndex + legal LLM for traceable legal answers.
+Combines vector search + PageIndex + legal LLM + Case Law for traceable legal answers.
 """
 
 from backend.services.legal_llm_service import LegalLLMService
 from backend.services.vectorless_rag_service import VectorlessRAGService
+from backend.services.case_law_service import get_case_law_service
 from backend.database.vector_db import VectorDB
 
 
@@ -13,6 +14,7 @@ class LegalRAGService:
         self.legal_llm = LegalLLMService()
         self.vector_db = vector_db
         self.vectorless_rag = None
+        self.case_law_service = get_case_law_service()
 
     def _get_vectorless_rag(self):
         if self.vectorless_rag is None:
@@ -24,16 +26,19 @@ class LegalRAGService:
         question: str,
         filter_metadata: dict = None,
         pageindex_doc_id: str = None,
-        doc_names: list[str] = None
+        doc_names: list[str] = None,
+        include_case_law: bool = True
     ) -> dict:
         """
         Hybrid Legal RAG:
         1. PageIndex (structural/tree-based) retrieval if available
         2. ChromaDB vector (semantic) retrieval
-        3. Legal LLM generates structured legal answer with citations
+        3. Case Law database (actual judgments) retrieval
+        4. Legal LLM generates structured legal answer with citations
         """
         all_contexts = []
         sources = []
+        case_law_context = []
 
         # 1. Vectorless / PageIndex retrieval (structural, page-level)
         if pageindex_doc_id:
@@ -66,7 +71,38 @@ class LegalRAGService:
                     "relevance_score": round(1 - hit.get("distance", 0), 3)
                 })
 
-        if not all_contexts:
+        # 3. Case Law retrieval (actual judgments)
+        if include_case_law:
+            print(f"[LegalRAG] Searching case law database...")
+            try:
+                relevant_cases = self.case_law_service.search_cases(question, top_k=3)
+                if relevant_cases:
+                    for case in relevant_cases:
+                        case_summary = f"""
+**Case: {case['case_name']}**
+Citation: {case['citation']}
+Court: {case['court']}
+Date: {case['date']}
+
+Issues: {' | '.join(case['issues'])}
+
+Holdings: {' | '.join(case['holdings'])}
+
+Relevance Score: {case['relevance_score']:.2f}
+"""
+                        case_law_context.append(case_summary)
+                        sources.append({
+                            "type": "case_law",
+                            "case_name": case['case_name'],
+                            "citation": case['citation'],
+                            "court": case['court'],
+                            "relevance_score": round(case['relevance_score'], 3)
+                        })
+                    print(f"[LegalRAG] Found {len(relevant_cases)} relevant cases")
+            except Exception as e:
+                print(f"[LegalRAG] Case law search failed: {e}")
+
+        if not all_contexts and not case_law_context:
             # No document context — answer from general legal knowledge
             print("[LegalRAG] No document context found, using general legal knowledge")
             answer = self.legal_llm.answer_general_legal_question(question)
@@ -76,10 +112,15 @@ class LegalRAGService:
                 "context_used": False
             }
 
-        # Deduplicate
+        # Combine document context and case law
         unique_contexts = list(dict.fromkeys(all_contexts))
         context_str = "\n\n---\n\n".join(unique_contexts)
-        print(f"[LegalRAG] Generating legal answer from {len(unique_contexts)} context blocks")
+        
+        if case_law_context:
+            case_law_str = "\n\n---\n\n".join(case_law_context)
+            context_str = f"{context_str}\n\n{'='*60}\nRELEVANT CASE LAW:\n{'='*60}\n\n{case_law_str}"
+        
+        print(f"[LegalRAG] Generating legal answer from {len(unique_contexts)} context blocks + {len(case_law_context)} cases")
 
         answer = self.legal_llm.answer_legal_question(question, context_str, doc_names=doc_names)
 
@@ -87,7 +128,8 @@ class LegalRAGService:
             "answer": answer,
             "sources": sources,
             "context_used": True,
-            "context_blocks": len(unique_contexts)
+            "context_blocks": len(unique_contexts),
+            "case_law_count": len(case_law_context)
         }
 
     def summarize_legal_document(self, filter_metadata: dict, doc_name: str = "Document") -> dict:

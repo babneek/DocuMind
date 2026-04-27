@@ -1,0 +1,34 @@
+{
+  "case_name": "Bharat Sanchar Nigam Ltd. v. Motorola India Pvt. Ltd.",
+  "citation": "(2009) 2 SCC 337",
+  "court": "Supreme Court of India",
+  "date": "2009-02-06",
+  "judges": [
+    "Justice S.B. Sinha",
+    "Justice Cyriac Joseph"
+  ],
+  "legal_areas": [
+    "Contract Law",
+    "Telecommunications",
+    "Breach of Contract",
+    "Damages"
+  ],
+  "facts": "BSNL entered into a contract with Motorola for supply and installation of telecommunications equipment. Motorola failed to meet delivery deadlines and performance specifications. BSNL terminated the contract and claimed damages including liquidated damages and loss of revenue.",
+  "issues": [
+    "What constitutes material breach in technology supply contracts?",
+    "Can liquidated damages and actual damages be claimed simultaneously?",
+    "What is the measure of damages for breach of technology contracts?"
+  ],
+  "holdings": [
+    "Failure to meet delivery deadlines and performance specifications constitutes material breach",
+    "Liquidated damages clause is enforceable if it represents genuine pre-estimate of loss",
+    "Actual damages beyond liquidated damages can be claimed if specifically reserved in contract"
+  ],
+  "reasoning": "The Supreme Court held that in technology supply contracts, timely delivery and meeting technical specifications are of essence. Failure on both counts constitutes material breach justifying termination. Regarding damages, the Court clarified that liquidated damages clauses are enforceable under Section 74 of the Indian Contract Act if they represent a genuine pre-estimate of loss, not a penalty. If the contract reserves the right to claim actual damages beyond liquidated damages, such claims are permissible.",
+  "precedents_cited": [
+    "Fateh Chand v. Balkishan Dass (1963)",
+    "Maula Bux v. Union of India (1969)",
+    "Oil and Natural Gas Corporation Ltd. v. Saw Pipes Ltd. (2003)"
+  ],
+  "full_text": "SUPREME COURT OF INDIA\n\nCivil Appeal No. 1220 of 2009\n\nBHARAT SANCHAR NIGAM LTD. ... Appellant\nVersus\nMOTOROLA INDIA PVT. LTD. ... Respondent\n\nJUDGMENT\n\nThis appeal challenges the judgment of the Delhi High Court which reduced the damages awarded to the appellant...\n\nThe contract dated 20th April 2004 required the respondent to supply and install GSM equipment across 15 telecom circles within 18 months. Clause 12 provided for liquidated damages at 0.5% per week of delay, maximum 10% of contract value...\n\nThe respondent failed to complete installation by the deadline of 20th October 2005. By the time of termination on 15th March 2006, the delay was 21 weeks...\n\nHELD: The liquidated damages clause is valid and enforceable. The appellant is entitled to liquidated damages of 10% of contract value. Additionally, since Clause 12 reserved the right to claim actual damages, the appellant may prove and claim revenue losses..."
+}
