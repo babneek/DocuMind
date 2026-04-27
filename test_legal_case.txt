@@ -1,0 +1,355 @@
+SUPREME COURT OF INDIA
+CIVIL APPELLATE JURISDICTION
+CIVIL APPEAL NO. 2024 OF 2024
+
+BETWEEN:
+
+TECH INNOVATIONS PVT. LTD.
+(A company incorporated under the Companies Act, 2013)
+Registered Office: 123 Business Park, Mumbai - 400001
+...Appellant
+
+VERSUS
+
+GLOBAL SOFTWARE SOLUTIONS INC.
+(A foreign company registered in Delaware, USA)
+Indian Branch Office: 456 Tech Tower, Bangalore - 560001
+...Respondent
+
+CORAM:
+HON'BLE MR. JUSTICE RAJESH KUMAR
+HON'BLE MR. JUSTICE PRIYA SHARMA
+
+DATE OF JUDGMENT: January 15, 2024
+
+JUDGMENT
+
+RAJESH KUMAR, J.
+
+1. INTRODUCTION AND BACKGROUND
+
+This appeal arises from a commercial dispute concerning breach of a Software Development and Licensing Agreement dated March 1, 2020 ("the Agreement") entered into between the Appellant, Tech Innovations Pvt. Ltd. ("Tech Innovations"), and the Respondent, Global Software Solutions Inc. ("Global Software").
+
+2. FACTS OF THE CASE
+
+2.1 On March 1, 2020, the parties entered into the Agreement whereby Global Software agreed to develop custom enterprise resource planning (ERP) software for Tech Innovations for a total consideration of Rs. 5,00,00,000 (Rupees Five Crores only).
+
+2.2 The Agreement contained the following key terms:
+
+(a) SCOPE OF WORK: Global Software would develop, test, and deploy a fully functional ERP system including modules for inventory management, financial accounting, human resources, and customer relationship management.
+
+(b) PAYMENT TERMS: The payment was structured in four installments:
+    - 25% (Rs. 1,25,00,000) upon signing - PAID
+    - 25% (Rs. 1,25,00,000) upon completion of design phase - PAID
+    - 25% (Rs. 1,25,00,000) upon completion of development phase - PAID
+    - 25% (Rs. 1,25,00,000) upon final deployment and acceptance - DISPUTED
+
+(c) DELIVERY TIMELINE: The complete system was to be delivered within 18 months from the date of agreement, i.e., by September 1, 2021.
+
+(d) ACCEPTANCE CRITERIA: The software would be deemed accepted if it met the functional specifications outlined in Annexure A and passed user acceptance testing (UAT) within 30 days of delivery.
+
+(e) WARRANTY PERIOD: Global Software warranted that the software would be free from material defects for a period of 12 months from the date of acceptance.
+
+(f) INTELLECTUAL PROPERTY: Upon full payment, all intellectual property rights in the custom-developed software would vest with Tech Innovations. Global Software retained rights to any pre-existing components or libraries used.
+
+(g) CONFIDENTIALITY: Both parties agreed to maintain strict confidentiality of all proprietary information exchanged during the course of the project.
+
+(h) LIMITATION OF LIABILITY: Global Software's total liability under the Agreement was capped at the total contract value of Rs. 5,00,00,000.
+
+(i) TERMINATION CLAUSE: Either party could terminate the Agreement upon 60 days written notice if the other party committed a material breach and failed to cure such breach within 30 days of receiving written notice.
+
+(j) DISPUTE RESOLUTION: Any disputes arising from the Agreement would first be attempted to be resolved through good faith negotiations. If unresolved within 30 days, the matter would be referred to arbitration under the Arbitration and Conciliation Act, 1996, with the seat of arbitration in Mumbai.
+
+(k) GOVERNING LAW: The Agreement was governed by the laws of India.
+
+(l) FORCE MAJEURE: Neither party would be liable for delays or failures in performance due to circumstances beyond their reasonable control, including acts of God, war, terrorism, pandemics, or government actions.
+
+3. SEQUENCE OF EVENTS
+
+3.1 March 2020 - August 2020: The design phase was completed satisfactorily, and Tech Innovations made the second payment of Rs. 1,25,00,000.
+
+3.2 September 2020 - March 2021: Development work progressed, though with some delays attributed to the COVID-19 pandemic. Tech Innovations made the third payment of Rs. 1,25,00,000 upon completion of the development phase.
+
+3.3 April 2021 - September 2021: Global Software delivered the software for UAT. However, Tech Innovations identified numerous critical defects including:
+    - Data integrity issues in the financial accounting module
+    - System crashes during peak load testing
+    - Incomplete integration between inventory and accounting modules
+    - Security vulnerabilities identified in penetration testing
+    - Non-compliance with GST reporting requirements under Indian tax law
+
+3.4 October 2021 - December 2021: Global Software attempted to fix the identified issues but failed to resolve all critical defects. Tech Innovations refused to accept the software and withheld the final payment.
+
+3.5 January 2022: Tech Innovations issued a formal notice of breach, demanding that Global Software either:
+    (a) Fix all identified defects within 30 days, or
+    (b) Refund all payments made (Rs. 3,75,00,000) plus damages
+
+3.6 February 2022: Global Software responded claiming that:
+    (a) The software substantially met the specifications
+    (b) Some issues were due to Tech Innovations' inadequate IT infrastructure
+    (c) Tech Innovations was obligated to make the final payment
+    (d) Any remaining issues would be addressed during the warranty period
+
+3.7 March 2022: Negotiations failed, and Tech Innovations initiated arbitration proceedings.
+
+4. ARBITRATION PROCEEDINGS
+
+4.1 The arbitration was conducted before a sole arbitrator, retired Justice Vikram Singh, in Mumbai.
+
+4.2 Tech Innovations claimed:
+    (a) Refund of Rs. 3,75,00,000 paid to Global Software
+    (b) Damages of Rs. 2,00,00,000 for business losses due to delayed ERP implementation
+    (c) Costs of engaging an alternative vendor (Rs. 6,00,00,000)
+    (d) Interest at 18% per annum from the date of each payment
+    (e) Arbitration costs and legal fees
+
+4.3 Global Software counterclaimed:
+    (a) Payment of the final installment of Rs. 1,25,00,000
+    (b) Additional charges of Rs. 50,00,000 for extra work beyond the original scope
+    (c) Interest at 12% per annum on unpaid amounts
+    (d) Arbitration costs and legal fees
+
+4.4 Both parties presented extensive evidence including:
+    - Technical expert reports on software quality and defects
+    - Email correspondence documenting the project timeline and issues
+    - Meeting minutes and progress reports
+    - Independent testing reports
+    - Financial records showing business impact
+
+5. ARBITRAL AWARD
+
+5.1 On August 15, 2023, the arbitrator delivered the award with the following key findings:
+
+(a) Global Software had committed a material breach by failing to deliver software that met the acceptance criteria specified in the Agreement.
+
+(b) The defects identified by Tech Innovations were substantial and not merely minor issues that could be addressed during the warranty period.
+
+(c) Global Software's claim that Tech Innovations' infrastructure was inadequate was not supported by evidence.
+
+(d) Tech Innovations was justified in refusing to accept the software and withholding the final payment.
+
+(e) However, Tech Innovations' claim for full refund was excessive as Global Software had performed substantial work.
+
+5.2 The arbitrator awarded:
+    (a) Tech Innovations was entitled to retain the final payment of Rs. 1,25,00,000
+    (b) Global Software was ordered to refund Rs. 1,50,00,000 (representing 40% of payments made for defective work)
+    (c) Global Software was ordered to pay Rs. 75,00,000 as damages for business losses
+    (d) Interest at 9% per annum on the refund amount from the date of the award
+    (e) Global Software was ordered to pay 70% of the arbitration costs
+    (f) Each party to bear their own legal fees
+
+5.3 Global Software's counterclaim was dismissed in its entirety.
+
+6. HIGH COURT PROCEEDINGS
+
+6.1 Global Software challenged the arbitral award under Section 34 of the Arbitration and Conciliation Act, 1996, before the Bombay High Court.
+
+6.2 Global Software's grounds for challenge included:
+    (a) The award was against public policy of India
+    (b) The arbitrator exceeded his jurisdiction
+    (c) The arbitrator failed to consider critical evidence
+    (d) The damages awarded were excessive and not supported by evidence
+    (e) The arbitrator was biased in favor of Tech Innovations
+
+6.3 On March 20, 2024, the High Court dismissed the challenge, holding that:
+    (a) The arbitrator's findings were based on proper appreciation of evidence
+    (b) There was no patent illegality in the award
+    (c) The damages were reasonable and supported by evidence
+    (d) No bias or misconduct was established
+    (e) The court's scope of interference under Section 34 is limited
+
+7. PRESENT APPEAL
+
+7.1 Global Software has filed this appeal under Section 37 of the Arbitration and Conciliation Act, 1996, challenging the High Court's order.
+
+7.2 The key contentions raised by the Appellant (Global Software) are:
+
+(a) SUBSTANTIAL PERFORMANCE: The software substantially performed the intended functions, and minor defects should not justify such a large refund and damages.
+
+(b) ACCEPTANCE BY CONDUCT: Tech Innovations used the software for several months during UAT, which constituted implied acceptance.
+
+(c) CONTRIBUTORY NEGLIGENCE: Tech Innovations failed to provide adequate cooperation and timely feedback, contributing to the delays and issues.
+
+(d) EXCESSIVE DAMAGES: The damages awarded for business losses were speculative and not proven with sufficient evidence.
+
+(e) LIMITATION OF LIABILITY: The total award exceeded the contractual limitation of liability clause.
+
+(f) FORCE MAJEURE: COVID-19 pandemic should excuse some of the delays and performance issues.
+
+7.3 The Respondent (Tech Innovations) contends:
+
+(a) MATERIAL BREACH: The defects were not minor but fundamental, rendering the software unfit for its intended purpose.
+
+(b) NO ACCEPTANCE: Using software during UAT for testing purposes does not constitute acceptance, especially when defects were promptly reported.
+
+(c) FULL COOPERATION: Tech Innovations provided all necessary cooperation, and any delays were caused by Global Software's poor performance.
+
+(d) PROVEN DAMAGES: Business losses were well-documented through financial records and expert testimony.
+
+(e) LIABILITY CAP INAPPLICABLE: The limitation of liability clause does not apply to cases of material breach and gross negligence.
+
+(f) FORCE MAJEURE INSUFFICIENT: Global Software failed to properly invoke force majeure provisions and did not demonstrate that COVID-19 directly caused the defects.
+
+8. LEGAL ISSUES FOR CONSIDERATION
+
+The following legal issues arise for our consideration:
+
+Issue 1: Whether the arbitrator correctly determined that Global Software committed a material breach of the Agreement?
+
+Issue 2: Whether the damages awarded were excessive or unsupported by evidence?
+
+Issue 3: Whether the limitation of liability clause should apply to limit Global Software's liability?
+
+Issue 4: Whether the High Court was correct in refusing to interfere with the arbitral award under Section 34?
+
+Issue 5: What is the appropriate remedy in the circumstances of this case?
+
+9. ANALYSIS AND FINDINGS
+
+ISSUE 1: MATERIAL BREACH
+
+9.1 The law on material breach in contract is well-established. A material breach is one that goes to the root of the contract and defeats the very purpose for which the parties entered into the agreement.
+
+9.2 In the present case, the evidence clearly establishes that:
+    (a) The software had critical defects affecting core functionality
+    (b) Data integrity issues in financial accounting could lead to serious compliance violations
+    (c) Security vulnerabilities exposed Tech Innovations to cyber risks
+    (d) Non-compliance with GST requirements made the software legally unusable
+    (e) System crashes during load testing showed the software was not production-ready
+
+9.3 These are not minor defects that could be easily fixed during a warranty period. They are fundamental failures that render the software unfit for its intended commercial purpose.
+
+9.4 Global Software's argument of "substantial performance" is not tenable. The doctrine of substantial performance applies when minor defects exist but the essential purpose of the contract is fulfilled. Here, the essential purpose—a functional, secure, and compliant ERP system—was not achieved.
+
+9.5 We therefore uphold the finding that Global Software committed a material breach.
+
+ISSUE 2: DAMAGES
+
+9.6 The arbitrator awarded Rs. 75,00,000 as damages for business losses. Global Software contends this is excessive and speculative.
+
+9.7 Tech Innovations presented evidence showing:
+    (a) Delayed business expansion due to lack of proper ERP system
+    (b) Lost efficiency and productivity
+    (c) Additional costs of manual processes
+    (d) Lost business opportunities
+
+9.8 While some element of business loss damages may involve estimation, the evidence presented was sufficient to establish a reasonable basis for the award.
+
+9.9 However, we find that the quantum of Rs. 75,00,000 is on the higher side. A more appropriate figure, considering the evidence, would be Rs. 50,00,000.
+
+9.10 We therefore modify the damages award to Rs. 50,00,000.
+
+ISSUE 3: LIMITATION OF LIABILITY
+
+9.11 The Agreement contained a clause limiting Global Software's total liability to Rs. 5,00,00,000 (the contract value).
+
+9.12 However, limitation of liability clauses are generally not enforceable in cases of:
+    (a) Fraud or willful misconduct
+    (b) Gross negligence
+    (c) Material breach going to the root of the contract
+
+9.13 While we do not find fraud or willful misconduct, the material breach in this case is of such a nature that enforcing the limitation clause would be inequitable.
+
+9.14 Moreover, the total award (refund of Rs. 1,50,00,000 + damages of Rs. 50,00,000 = Rs. 2,00,00,000) is well within the Rs. 5,00,00,000 cap, so this issue is academic.
+
+ISSUE 4: SCOPE OF JUDICIAL INTERFERENCE
+
+9.15 Under Section 34 of the Arbitration and Conciliation Act, 1996, courts have limited grounds to set aside an arbitral award.
+
+9.16 The Supreme Court has repeatedly held that courts should not re-appreciate evidence or substitute their own views for those of the arbitrator.
+
+9.17 Interference is justified only if:
+    (a) The award is contrary to public policy
+    (b) There is patent illegality on the face of the award
+    (c) The arbitrator exceeded jurisdiction
+    (d) There was bias or misconduct
+
+9.18 None of these grounds are established in this case. The arbitrator's findings are based on proper appreciation of evidence and application of law.
+
+9.19 The High Court was therefore correct in refusing to interfere with the award.
+
+ISSUE 5: APPROPRIATE REMEDY
+
+9.20 Considering all circumstances, we find the following to be the appropriate remedy:
+
+(a) Tech Innovations is entitled to retain the final payment of Rs. 1,25,00,000 - UPHELD
+
+(b) Global Software shall refund Rs. 1,50,00,000 to Tech Innovations - UPHELD
+
+(c) Global Software shall pay Rs. 50,00,000 (reduced from Rs. 75,00,000) as damages - MODIFIED
+
+(d) Interest at 9% per annum on the refund amount from the date of the arbitral award - UPHELD
+
+(e) Global Software shall pay 70% of arbitration costs - UPHELD
+
+(f) Each party to bear their own legal fees for all proceedings - MODIFIED (Global Software to pay 50% of Tech Innovations' legal fees for High Court and Supreme Court proceedings)
+
+10. CONCLUSION
+
+10.1 This case highlights the importance of clear contractual terms and proper project management in software development agreements.
+
+10.2 When a party commits a material breach that goes to the root of the contract, the innocent party is entitled to substantial remedies including refund of payments and damages.
+
+10.3 Arbitral awards should be respected and courts should interfere only on limited grounds as specified in the Arbitration Act.
+
+10.4 The appeal is partly allowed with the modifications noted above.
+
+11. ORDER
+
+(a) The appeal is partly allowed.
+
+(b) The damages awarded for business losses are reduced from Rs. 75,00,000 to Rs. 50,00,000.
+
+(c) Global Software Solutions Inc. is directed to pay 50% of Tech Innovations Pvt. Ltd.'s legal fees for the High Court and Supreme Court proceedings, to be quantified by the Registrar.
+
+(d) In all other respects, the arbitral award dated August 15, 2023, as upheld by the Bombay High Court, is affirmed.
+
+(e) Global Software Solutions Inc. shall comply with this order within 90 days from today.
+
+(f) No order as to costs of this appeal.
+
+(g) All pending applications, if any, stand disposed of.
+
+
+(RAJESH KUMAR, J.)                    (PRIYA SHARMA, J.)
+
+New Delhi
+January 15, 2024
+
+
+ANNEXURE A - KEY LEGAL PRINCIPLES APPLIED
+
+1. MATERIAL BREACH: A breach is material when it substantially defeats the purpose of the contract. (Satyabrata Ghose v. Mugneeram Bangur & Co., AIR 1954 SC 44)
+
+2. SUBSTANTIAL PERFORMANCE: The doctrine applies only when the essential purpose is achieved despite minor defects. (Hoenig v. Isaacs [1952] 2 All ER 176)
+
+3. DAMAGES: Damages must be proven with reasonable certainty and must be foreseeable at the time of contract. (Hadley v. Baxendale (1854) 9 Exch 341)
+
+4. LIMITATION OF LIABILITY: Such clauses are strictly construed and may not apply to material breaches or gross negligence. (ONGC v. Saw Pipes Ltd., (2003) 5 SCC 705)
+
+5. ARBITRATION - JUDICIAL REVIEW: Courts have limited scope to interfere with arbitral awards. (Associate Builders v. DDA, (2015) 3 SCC 49)
+
+6. ACCEPTANCE OF GOODS/SOFTWARE: Use for testing purposes does not constitute acceptance. (Sale of Goods Act, 1930, Section 42)
+
+7. FORCE MAJEURE: The party claiming force majeure must prove direct causation between the event and the breach. (Energy Watchdog v. CERC, (2017) 14 SCC 80)
+
+
+CASE CITATIONS:
+
+1. Satyabrata Ghose v. Mugneeram Bangur & Co., AIR 1954 SC 44
+2. Associate Builders v. Delhi Development Authority, (2015) 3 SCC 49
+3. ONGC Ltd. v. Saw Pipes Ltd., (2003) 5 SCC 705
+4. Energy Watchdog v. Central Electricity Regulatory Commission, (2017) 14 SCC 80
+5. Ssangyong Engineering & Construction Co. Ltd. v. NHAI, (2019) 15 SCC 131
+6. Dyna Technologies Pvt. Ltd. v. Crompton Greaves Ltd., (2019) 20 SCC 1
+7. Hadley v. Baxendale, (1854) 9 Exch 341
+8. Hoenig v. Isaacs, [1952] 2 All ER 176
+
+STATUTES REFERRED:
+
+1. Arbitration and Conciliation Act, 1996 - Sections 34, 37
+2. Indian Contract Act, 1872 - Sections 73, 74
+3. Sale of Goods Act, 1930 - Section 42
+4. Companies Act, 2013
+5. Information Technology Act, 2000
+
+---END OF JUDGMENT---

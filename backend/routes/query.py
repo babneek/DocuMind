@@ -12,6 +12,7 @@ from backend.services.legal_rag_service import LegalRAGService
 from backend.services.rag_service import RAGService
 from backend.services.llm_service import LLMService
 from backend.services.cache_service import get_cache_manager
+from backend.services.legal_knowledge_service import LegalKnowledgeService
 from backend.database.vector_db import VectorDB
 from .auth import get_current_user
 from backend.models.user import User
@@ -22,6 +23,7 @@ vector_db = VectorDB()
 llm_service = LLMService()
 rag_service = RAGService(llm_service, vector_db)       # legacy fallback
 legal_rag = LegalRAGService(vector_db)                 # legal-aware service
+legal_knowledge = LegalKnowledgeService()              # legal knowledge base
 cache_manager = get_cache_manager()
 
 
@@ -48,6 +50,11 @@ class CompareRequest(BaseModel):
 class ExtractionRequest(BaseModel):
     doc_id: int
     schema_description: str
+
+class PrecedentSearchRequest(BaseModel):
+    query: str
+    legal_area: Optional[str] = None  # contract, arbitration, IP, etc.
+    top_k: int = 5
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -180,3 +187,20 @@ async def extract(
     filter_meta = {"doc_id": request.doc_id}
     data = rag_service.extract_structured_from_document(request.schema_description, filter_metadata=filter_meta)
     return {"data": data}
+
+
+@router.post("/search-precedents")
+async def search_precedents(
+    request: PrecedentSearchRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Search legal knowledge base for relevant precedents and case law.
+    Returns analysis of what courts generally say about similar cases.
+    """
+    result = legal_knowledge.search_precedents(
+        query=request.query,
+        legal_area=request.legal_area,
+        top_k=request.top_k
+    )
+    return result
