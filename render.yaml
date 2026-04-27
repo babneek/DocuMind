@@ -1,0 +1,20 @@
+# Render configuration for persistent case law database
+
+services:
+  - type: web
+    name: documind-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    
+    # Persistent disk for case law database
+    disk:
+      name: case-law-db
+      mountPath: /opt/render/project/src/backend/case_law_db
+      sizeGB: 1  # 1GB should be enough for 1000+ cases
+    
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: CASE_LAW_DB_PATH
+        value: /opt/render/project/src/backend/case_law_db

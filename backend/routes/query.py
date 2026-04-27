@@ -312,3 +312,50 @@ async def get_case_law_stats(
         return stats
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+
+
+@router.post("/admin/import-cases")
+async def trigger_case_import(
+    mode: str = "foundation",  # foundation, full, or category
+    category: str = None,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    ADMIN ONLY: Trigger case law import on the server
+    
+    Modes:
+    - foundation: Import 100 landmark cases (~30-45 min)
+    - full: Import 500+ cases (~2-3 hours)
+    - category: Import specific category
+    
+    WARNING: This is a long-running operation. Use with caution.
+    """
+    try:
+        # Import here to avoid loading heavy dependencies on startup
+        from scripts.bulk_import_cases import BulkCaseImporter
+        import threading
+        
+        def run_import():
+            """Run import in background"""
+            importer = BulkCaseImporter()
+            
+            if mode == "foundation":
+                importer.import_foundation_cases()
+            elif mode == "full":
+                importer.import_all_categories(cases_per_query=5)
+            elif mode == "category" and category:
+                importer.import_category(category, cases_per_query=10)
+        
+        # Start import in background thread
+        thread = threading.Thread(target=run_import, daemon=True)
+        thread.start()
+        
+        return {
+            "message": f"Case import started in background (mode: {mode})",
+            "note": "This will take 30-45 minutes for foundation mode. Check logs for progress.",
+            "mode": mode,
+            "category": category if category else None
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to start import: {str(e)}")

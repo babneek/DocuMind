@@ -74,6 +74,69 @@ export interface CompareResponse {
   doc2: string;
 }
 
+// ── Case Law Types ───────────────────────────────────────────────────────────
+
+export interface CaseLawStats {
+  total_cases: number;
+  courts: string[];
+  legal_areas: string[];
+  categories: Record<string, number>;
+  importance_distribution: {
+    Landmark: number;
+    Important: number;
+    Regular: number;
+  };
+  last_updated: string;
+}
+
+export interface CaseLawCase {
+  case_id: string;
+  case_name: string;
+  citation: string;
+  court: string;
+  date: string;
+  category: string;
+  subcategory: string;
+  importance: string;
+  legal_areas: string[];
+  issues: string[];
+  holdings: string[];
+  relevance_score: number;
+  excerpt: string;
+}
+
+export interface CaseLawSearchRequest {
+  query: string;
+  legal_area?: string;
+  court?: string;
+  category?: string;
+  importance?: string;
+  top_k?: number;
+}
+
+export interface CaseLawSearchResponse {
+  message: string;
+  cases: CaseLawCase[];
+  query: string;
+  filters?: {
+    legal_area?: string;
+    court?: string;
+    category?: string;
+  };
+}
+
+export interface CaseImportRequest {
+  mode: 'foundation' | 'full' | 'category';
+  category?: string;
+}
+
+export interface CaseImportResponse {
+  message: string;
+  note: string;
+  mode: string;
+  category?: string;
+}
+
 // ── Auth ─────────────────────────────────────────────────────────────────────
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
@@ -176,5 +239,29 @@ export const rebuildNote = async (noteId: number, sections: any[]): Promise<Note
 
 // legacy alias
 export const askQuestion = askLegalQuestion;
+
+// ── Case Law Admin Endpoints ─────────────────────────────────────────────────
+
+export const getCaseLawStats = async (): Promise<CaseLawStats> => {
+  const res = await api.get('/api/query/case-law-stats');
+  return res.data;
+};
+
+export const searchCaseLaw = async (data: CaseLawSearchRequest): Promise<CaseLawSearchResponse> => {
+  const res = await api.post('/api/query/search-case-law', data);
+  return res.data;
+};
+
+export const getCaseDetails = async (caseId: string): Promise<{ case: any; case_id: string }> => {
+  const res = await api.get(`/api/query/case-law/${caseId}`);
+  return res.data;
+};
+
+export const triggerCaseImport = async (data: CaseImportRequest): Promise<CaseImportResponse> => {
+  const res = await api.post('/api/query/admin/import-cases', null, {
+    params: { mode: data.mode, category: data.category }
+  });
+  return res.data;
+};
 
 export default api;

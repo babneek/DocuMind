@@ -5,6 +5,7 @@ import DashboardView from "../components/DashboardView";
 import DocumentsView from "../components/DocumentsView";
 import QueryView from "../components/QueryView";
 import NotesView from "../components/NotesView";
+import CaseLawAdmin from "../components/CaseLawAdmin";
 
 const Index = () => {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
@@ -25,6 +26,7 @@ const Index = () => {
       {currentView === "documents" && <DocumentsView />}
       {currentView === "query" && <QueryView />}
       {currentView === "notes" && <NotesView />}
+      {currentView === "caselaw" && <CaseLawAdmin />}
     </NavShell>
   );
 };
