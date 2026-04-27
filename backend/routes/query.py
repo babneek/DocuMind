@@ -308,10 +308,59 @@ async def get_case_law_stats(
     Returns total cases, courts covered, and legal areas.
     """
     try:
-        stats = case_law_service.get_database_stats()
+        # Initialize service if needed
+        service = get_case_law_service()
+        stats = service.get_database_stats()
         return stats
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+        import traceback
+        print(f"Error getting case law stats: {str(e)}")
+        print(traceback.format_exc())
+        # Return empty stats instead of error
+        return {
+            "total_cases": 0,
+            "courts": [],
+            "legal_areas": [],
+            "categories": {},
+            "importance_distribution": {
+                "Landmark": 0,
+                "Important": 0,
+                "Regular": 0
+            },
+            "last_updated": "",
+            "error": str(e)
+        }
+
+
+@router.get("/case-law-health")
+async def case_law_health_check():
+    """
+    Health check for case law system (no auth required for debugging)
+    """
+    try:
+        import os
+        service = get_case_law_service()
+        stats = service.get_database_stats()
+        
+        # Check database path
+        db_path = os.path.join(os.path.dirname(__file__), "..", "..", "case_law_db")
+        db_exists = os.path.exists(db_path)
+        
+        return {
+            "status": "healthy",
+            "database_path": db_path,
+            "database_exists": db_exists,
+            "total_cases": stats.get("total_cases", 0),
+            "service_initialized": True
+        }
+    except Exception as e:
+        import traceback
+        return {
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "service_initialized": False
+        }
 
 
 @router.post("/admin/import-cases")

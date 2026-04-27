@@ -18,24 +18,33 @@ class CaseLawService:
     """Service for managing and searching legal case law database"""
     
     def __init__(self):
-        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-        
-        # Initialize ChromaDB for case law
-        self.chroma_client = chromadb.PersistentClient(
-            path="backend/case_law_db",
-            settings=Settings(anonymized_telemetry=False)
-        )
-        
-        # Create collection for case law
         try:
-            self.collection = self.chroma_client.get_collection("indian_case_law")
-        except:
-            self.collection = self.chroma_client.create_collection(
-                name="indian_case_law",
-                metadata={"description": "Indian legal judgments and precedents"}
+            self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+            
+            # Initialize ChromaDB for case law
+            db_path = os.path.join(os.path.dirname(__file__), "..", "case_law_db")
+            os.makedirs(db_path, exist_ok=True)
+            
+            self.chroma_client = chromadb.PersistentClient(
+                path=db_path,
+                settings=Settings(anonymized_telemetry=False)
             )
-        
-        logger.info("CaseLawService initialized")
+            
+            # Create collection for case law
+            try:
+                self.collection = self.chroma_client.get_collection("indian_case_law")
+                logger.info("Loaded existing case law collection")
+            except:
+                self.collection = self.chroma_client.create_collection(
+                    name="indian_case_law",
+                    metadata={"description": "Indian legal judgments and precedents"}
+                )
+                logger.info("Created new case law collection")
+            
+            logger.info("CaseLawService initialized successfully")
+        except Exception as e:
+            logger.error(f"Error initializing CaseLawService: {str(e)}")
+            raise
     
     def add_case(self, case_data: Dict[str, Any]) -> str:
         """

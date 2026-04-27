@@ -60,8 +60,21 @@ export default function CaseLawAdmin() {
       setLoading(true);
       const data = await getCaseLawStats();
       setStats(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load stats:', error);
+      // Set default empty stats on error
+      setStats({
+        total_cases: 0,
+        courts: [],
+        legal_areas: [],
+        categories: {},
+        importance_distribution: {
+          Landmark: 0,
+          Important: 0,
+          Regular: 0
+        },
+        last_updated: ''
+      });
     } finally {
       setLoading(false);
     }
