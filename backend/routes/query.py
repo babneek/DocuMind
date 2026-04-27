@@ -365,47 +365,72 @@ async def case_law_health_check():
 
 @router.post("/admin/import-cases")
 async def trigger_case_import(
-    mode: str = "foundation",  # foundation, full, or category
-    category: str = None,
+    mode: str = "foundation",  # foundation or domain
+    domain: str = None,  # Contract Law, Corporate Law, etc.
     current_user: User = Depends(get_current_user)
 ):
     """
-    ADMIN ONLY: Trigger case law import on the server
+    ADMIN ONLY: Import pre-defined cases for selected domain
     
     Modes:
-    - foundation: Import 5 landmark cases (quick, works on Render)
-    - full: Not supported on Render (use local import)
-    - category: Not supported on Render (use local import)
+    - foundation: Import all available cases (10+ cases)
+    - domain: Import cases for specific domain (2-5 cases per domain)
     
-    For 100+ cases, run locally and push to git:
-      python backend/scripts/quick_import_100_cases.py
-      git add backend/case_law_db/
-      git commit -m "Add cases"
-      git push
+    Available domains:
+    - Contract Law
+    - Corporate Law
+    - Intellectual Property
+    - Employment Law
+    - Real Estate
     """
     try:
-        if mode != "foundation":
-            return {
-                "message": "Only foundation mode (5 cases) is supported via UI",
-                "note": "For 100+ cases, run locally: python backend/scripts/quick_import_100_cases.py",
-                "mode": mode
-            }
-        
-        # Import the simple populate script
+        # Import case collections
         import sys
         from pathlib import Path
         backend_dir = Path(__file__).parent.parent
         sys.path.insert(0, str(backend_dir))
         
-        from scripts.populate_case_law import populate_database
+        from data.case_collections import get_cases_for_domain, get_all_cases, get_available_domains
         import threading
         
         def run_import():
             """Run import in background"""
             try:
-                print("Starting foundation case import...")
-                populate_database()
-                print("Foundation import complete!")
+                print(f"Starting import - mode: {mode}, domain: {domain}")
+                
+                # Get cases to import
+                if mode == "foundation":
+                    cases_to_import = get_all_cases()
+                    print(f"Importing all {len(cases_to_import)} cases")
+                elif mode == "domain" and domain:
+                    cases_to_import = get_cases_for_domain(domain)
+                    print(f"Importing {len(cases_to_import)} cases for {domain}")
+                else:
+                    print("Invalid mode or missing domain")
+                    return
+                
+                # Import each case
+                added_count = 0
+                for case_data in cases_to_import:
+                    try:
+                        # Check for duplicates
+                        if case_law_service.is_duplicate(
+                            case_data.get('case_name', ''),
+                            case_data.get('citation', '')
+                        ):
+                            print(f"  ⊘ Duplicate: {case_data['case_name']}")
+                            continue
+                        
+                        # Add case
+                        case_id = case_law_service.add_case(case_data)
+                        print(f"  ✓ Added: {case_data['case_name']}")
+                        added_count += 1
+                    except Exception as e:
+                        print(f"  ✗ Error adding case: {str(e)}")
+                        continue
+                
+                print(f"Import complete! Added {added_count} cases")
+                
             except Exception as e:
                 import traceback
                 print(f"Import error: {str(e)}")
@@ -415,15 +440,52 @@ async def trigger_case_import(
         thread = threading.Thread(target=run_import, daemon=True)
         thread.start()
         
+        # Get case count
+        if mode == "foundation":
+            case_count = len(get_all_cases())
+        elif mode == "domain" and domain:
+            case_count = len(get_cases_for_domain(domain))
+        else:
+            case_count = 0
+        
         return {
-            "message": "Importing 5 landmark cases in background",
-            "note": "This will take 1-2 minutes. Refresh the page to see updated stats.",
+            "message": f"Importing {case_count} case(s) in background",
+            "note": "This will take 10-30 seconds. Refresh the page to see updated stats.",
             "mode": mode,
-            "cases_count": 5
+            "domain": domain,
+            "cases_count": case_count
         }
     
     except Exception as e:
         import traceback
-        error_detail = f"Failed to start import: {str(e)}\n{traceback.format_exc()}"
-        print(error_detail)
+        error_detail = str(e)
+        print(f"Error: {error_detail}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=error_detail)
+
+
+@router.get("/admin/available-domains")
+async def get_available_domains_endpoint(
+    current_user: User = Depends(get_current_user)
+):
+    """Get list of available domains for import"""
+    try:
+        from data.case_collections import get_available_domains, get_cases_for_domain
+        
+        domains = get_available_domains()
+        domain_info = []
+        
+        for domain in domains:
+            cases = get_cases_for_domain(domain)
+            domain_info.append({
+                "name": domain,
+                "case_count": len(cases),
+                "sample_cases": [c['case_name'] for c in cases[:2]]
+            })
+        
+        return {
+            "domains": domain_info,
+            "total_domains": len(domains)
+        }
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -23,9 +23,11 @@ import {
   getCaseLawStats,
   searchCaseLaw,
   triggerCaseImport,
+  getAvailableDomains,
   type CaseLawStats,
   type CaseLawCase,
-  type CaseLawSearchRequest
+  type CaseLawSearchRequest,
+  type DomainInfo
 } from '../lib/api';
 
 const CATEGORIES = [
@@ -50,10 +52,21 @@ export default function CaseLawAdmin() {
   const [searchResults, setSearchResults] = useState<CaseLawCase[]>([]);
   const [searching, setSearching] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [availableDomains, setAvailableDomains] = useState<DomainInfo[]>([]);
 
   useEffect(() => {
     loadStats();
+    loadAvailableDomains();
   }, []);
+
+  const loadAvailableDomains = async () => {
+    try {
+      const data = await getAvailableDomains();
+      setAvailableDomains(data.domains);
+    } catch (error) {
+      console.error('Failed to load domains:', error);
+    }
+  };
 
   const loadStats = async () => {
     try {
@@ -80,19 +93,12 @@ export default function CaseLawAdmin() {
     }
   };
 
-  const handleImport = async (mode: 'foundation' | 'full' | 'category', category?: string) => {
+  const handleImport = async (mode: 'foundation' | 'domain', domain?: string) => {
     if (importing) return;
 
     const confirmMsg = mode === 'foundation'
-      ? 'Import 5 landmark cases? This will take 1-2 minutes.'
-      : mode === 'full'
-      ? 'Full import not supported via UI. Run locally instead.'
-      : `Category import not supported via UI. Run locally instead.`;
-
-    if (mode !== 'foundation') {
-      alert(confirmMsg + '\n\nCommand: python backend/scripts/quick_import_100_cases.py');
-      return;
-    }
+      ? `Import all available cases (${availableDomains.reduce((sum, d) => sum + d.case_count, 0)} cases)? This will take 10-30 seconds.`
+      : `Import ${domain} cases? This will take 5-10 seconds.`;
 
     if (!confirm(confirmMsg)) return;
 
@@ -100,7 +106,7 @@ export default function CaseLawAdmin() {
       setImporting(true);
       setImportStatus('Starting import...');
       
-      const response = await triggerCaseImport({ mode, category });
+      const response = await triggerCaseImport({ mode, domain });
       
       setImportStatus(response.message);
       
@@ -109,7 +115,7 @@ export default function CaseLawAdmin() {
         loadStats();
         setImporting(false);
         setImportStatus('');
-      }, 5000);
+      }, 3000);
       
     } catch (error: any) {
       console.error('Import failed:', error);
@@ -258,7 +264,7 @@ export default function CaseLawAdmin() {
           Quick Import
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <button
             onClick={() => handleImport('foundation')}
             disabled={importing}
@@ -267,60 +273,48 @@ export default function CaseLawAdmin() {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-blue-600 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900">Quick Import (UI)</h3>
+                <h3 className="font-semibold text-gray-900">Import All Domains</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  Import 5 landmark cases via UI
+                  Import {availableDomains.reduce((sum, d) => sum + d.case_count, 0)} landmark cases across all domains
                 </p>
-                <p className="text-xs text-gray-500 mt-2">⏱️ 1-2 minutes</p>
+                <p className="text-xs text-gray-500 mt-2">⏱️ 10-30 seconds</p>
               </div>
             </div>
           </button>
-
-          <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 text-left">
-            <div className="flex items-start gap-3">
-              <Database className="w-6 h-6 text-gray-400 mt-1" />
-              <div>
-                <h3 className="font-semibold text-gray-900">Full Import (Local)</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Run locally for 100+ cases
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  Command: <code className="bg-gray-200 px-1 rounded">python backend/scripts/quick_import_100_cases.py</code>
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
           <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
           <div className="text-sm text-blue-800">
-            <strong>Note:</strong> UI import adds 5 cases quickly. For 100+ cases, run the import script locally and push to git.
+            <strong>Note:</strong> Import runs instantly. Refresh the page after a few seconds to see updated statistics.
           </div>
         </div>
       </div>
 
-      {/* Category-Specific Import */}
+      {/* Domain-Specific Import */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Import by Category
+          Import by Domain
         </h2>
         
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {CATEGORIES.map((cat) => {
-            const Icon = cat.icon;
-            const count = stats?.categories?.[cat.name] || 0;
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {availableDomains.map((domain) => {
+            const Icon = CATEGORIES.find(c => c.name === domain.name)?.icon || BookOpen;
+            const color = CATEGORIES.find(c => c.name === domain.name)?.color || 'gray';
+            const currentCount = stats?.categories?.[domain.name] || 0;
             
             return (
               <button
-                key={cat.name}
-                onClick={() => handleImport('category', cat.name)}
+                key={domain.name}
+                onClick={() => handleImport('domain', domain.name)}
                 disabled={importing}
-                className={`p-4 border-2 rounded-lg hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left border-${cat.color}-200 hover:border-${cat.color}-400 hover:bg-${cat.color}-50`}
+                className={`p-4 border-2 rounded-lg hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left border-${color}-200 hover:border-${color}-400 hover:bg-${color}-50`}
               >
-                <Icon className={`w-6 h-6 text-${cat.color}-600 mb-2`} />
-                <h3 className="font-medium text-gray-900 text-sm">{cat.name}</h3>
-                <p className="text-xs text-gray-500 mt-1">{count} cases</p>
+                <Icon className={`w-6 h-6 text-${color}-600 mb-2`} />
+                <h3 className="font-medium text-gray-900 text-sm">{domain.name}</h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  {currentCount} in DB • {domain.case_count} available
+                </p>
               </button>
             );
           })}

@@ -126,15 +126,27 @@ export interface CaseLawSearchResponse {
 }
 
 export interface CaseImportRequest {
-  mode: 'foundation' | 'full' | 'category';
-  category?: string;
+  mode: 'foundation' | 'domain';
+  domain?: string;
 }
 
 export interface CaseImportResponse {
   message: string;
   note: string;
   mode: string;
-  category?: string;
+  domain?: string;
+  cases_count: number;
+}
+
+export interface DomainInfo {
+  name: string;
+  case_count: number;
+  sample_cases: string[];
+}
+
+export interface AvailableDomainsResponse {
+  domains: DomainInfo[];
+  total_domains: number;
 }
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
@@ -259,8 +271,13 @@ export const getCaseDetails = async (caseId: string): Promise<{ case: any; case_
 
 export const triggerCaseImport = async (data: CaseImportRequest): Promise<CaseImportResponse> => {
   const res = await api.post('/api/query/admin/import-cases', null, {
-    params: { mode: data.mode, category: data.category }
+    params: { mode: data.mode, domain: data.domain }
   });
+  return res.data;
+};
+
+export const getAvailableDomains = async (): Promise<AvailableDomainsResponse> => {
+  const res = await api.get('/api/query/admin/available-domains');
   return res.data;
 };
 
