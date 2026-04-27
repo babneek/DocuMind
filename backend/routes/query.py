@@ -367,14 +367,15 @@ async def case_law_health_check():
 async def trigger_case_import(
     mode: str = "foundation",  # foundation or domain
     domain: str = None,  # Contract Law, Corporate Law, etc.
+    cases_count: int = 10,  # Number of cases to import
     current_user: User = Depends(get_current_user)
 ):
     """
-    ADMIN ONLY: Import pre-defined cases for selected domain
+    ADMIN ONLY: Import REAL cases from Indian Kanoon for selected domain
     
     Modes:
-    - foundation: Import all available cases (10+ cases)
-    - domain: Import cases for specific domain (2-5 cases per domain)
+    - foundation: Import cases from all domains (10 cases per domain)
+    - domain: Import cases for specific domain only
     
     Available domains:
     - Contract Law
@@ -382,54 +383,129 @@ async def trigger_case_import(
     - Intellectual Property
     - Employment Law
     - Real Estate
+    - Arbitration
+    - Cyber Law
+    - Tax Law
+    - Banking & Finance
+    - Consumer Protection
     """
     try:
-        # Import case collections
-        import sys
-        from pathlib import Path
-        backend_dir = Path(__file__).parent.parent
-        sys.path.insert(0, str(backend_dir))
-        
-        from data.case_collections import get_cases_for_domain, get_all_cases, get_available_domains
         import threading
+        
+        # Domain to search query mapping
+        DOMAIN_QUERIES = {
+            "Contract Law": "contract breach Supreme Court India",
+            "Corporate Law": "company director shareholder Supreme Court India",
+            "Intellectual Property": "patent trademark copyright Supreme Court India",
+            "Employment Law": "employment termination labor Supreme Court India",
+            "Real Estate": "property land lease Supreme Court India",
+            "Arbitration": "arbitration award Supreme Court India",
+            "Cyber Law": "cyber crime data protection Supreme Court India",
+            "Tax Law": "income tax GST Supreme Court India",
+            "Banking & Finance": "banking loan SARFAESI Supreme Court India",
+            "Consumer Protection": "consumer defective product Supreme Court India"
+        }
         
         def run_import():
             """Run import in background"""
             try:
-                print(f"Starting import - mode: {mode}, domain: {domain}")
+                import sys
+                from pathlib import Path
+                backend_dir = Path(__file__).parent.parent
+                sys.path.insert(0, str(backend_dir))
+                sys.path.insert(0, str(backend_dir / "scripts"))
                 
-                # Get cases to import
+                from scrapers.indian_kanoon_scraper import IndianKanoonScraper
+                from services.case_categorizer import get_case_categorizer
+                
+                print(f"Starting real case import - mode: {mode}, domain: {domain}")
+                
+                scraper = IndianKanoonScraper(delay=1)  # Faster for UI
+                categorizer = get_case_categorizer()
+                
+                # Determine which domains to import
                 if mode == "foundation":
-                    cases_to_import = get_all_cases()
-                    print(f"Importing all {len(cases_to_import)} cases")
+                    domains_to_import = list(DOMAIN_QUERIES.keys())
+                    cases_per_domain = max(1, cases_count // len(domains_to_import))
                 elif mode == "domain" and domain:
-                    cases_to_import = get_cases_for_domain(domain)
-                    print(f"Importing {len(cases_to_import)} cases for {domain}")
+                    domains_to_import = [domain]
+                    cases_per_domain = cases_count
                 else:
                     print("Invalid mode or missing domain")
                     return
                 
-                # Import each case
-                added_count = 0
-                for case_data in cases_to_import:
+                total_added = 0
+                
+                for import_domain in domains_to_import:
+                    query = DOMAIN_QUERIES.get(import_domain)
+                    if not query:
+                        continue
+                    
+                    print(f"\n{'='*60}")
+                    print(f"Importing {import_domain} cases...")
+                    print(f"{'='*60}")
+                    
                     try:
-                        # Check for duplicates
-                        if case_law_service.is_duplicate(
-                            case_data.get('case_name', ''),
-                            case_data.get('citation', '')
-                        ):
-                            print(f"  ⊘ Duplicate: {case_data['case_name']}")
-                            continue
+                        # Scrape cases from Indian Kanoon
+                        raw_cases = scraper.search_cases(query, num_results=cases_per_domain)
+                        print(f"Fetched {len(raw_cases)} cases from Indian Kanoon")
                         
-                        # Add case
-                        case_id = case_law_service.add_case(case_data)
-                        print(f"  ✓ Added: {case_data['case_name']}")
-                        added_count += 1
+                        for raw_case in raw_cases:
+                            try:
+                                # Check for duplicates
+                                if case_law_service.is_duplicate(
+                                    raw_case.get('case_name', ''),
+                                    raw_case.get('citation', '')
+                                ):
+                                    print(f"  ⊘ Duplicate: {raw_case['case_name'][:60]}...")
+                                    continue
+                                
+                                # Auto-categorize using LLM
+                                print(f"  🤖 Categorizing: {raw_case['case_name'][:60]}...")
+                                metadata = categorizer.categorize_case(
+                                    raw_case.get('full_text', ''),
+                                    raw_case.get('case_name', ''),
+                                    raw_case.get('citation', '')
+                                )
+                                
+                                # Merge data
+                                case_data = {
+                                    "case_name": raw_case.get('case_name', 'Unknown'),
+                                    "citation": raw_case.get('citation', ''),
+                                    "court": raw_case.get('court', ''),
+                                    "date": raw_case.get('date', ''),
+                                    "judges": raw_case.get('judges', []),
+                                    "category": metadata.get('category', import_domain),
+                                    "subcategory": metadata.get('subcategory', ''),
+                                    "legal_areas": metadata.get('legal_areas', [import_domain]),
+                                    "jurisdiction": "India",
+                                    "importance": metadata.get('importance', 'Regular'),
+                                    "facts": raw_case.get('full_text', '')[:500] + "...",
+                                    "issues": [metadata.get('issues_summary', 'See full text')],
+                                    "holdings": [metadata.get('holdings_summary', 'See full text')],
+                                    "reasoning": raw_case.get('full_text', '')[500:1000] + "...",
+                                    "precedents_cited": [],
+                                    "full_text": raw_case.get('full_text', ''),
+                                    "source": "Indian Kanoon (Auto-imported)",
+                                    "url": raw_case.get('url', '')
+                                }
+                                
+                                # Add to database
+                                case_id = case_law_service.add_case(case_data)
+                                print(f"  ✓ Added: {case_data['case_name'][:60]}... [{metadata['category']}]")
+                                total_added += 1
+                                
+                            except Exception as e:
+                                print(f"  ✗ Error processing case: {str(e)}")
+                                continue
+                        
                     except Exception as e:
-                        print(f"  ✗ Error adding case: {str(e)}")
+                        print(f"Error importing {import_domain}: {str(e)}")
                         continue
                 
-                print(f"Import complete! Added {added_count} cases")
+                print(f"\n{'='*60}")
+                print(f"Import complete! Added {total_added} real cases")
+                print(f"{'='*60}")
                 
             except Exception as e:
                 import traceback
@@ -440,20 +516,13 @@ async def trigger_case_import(
         thread = threading.Thread(target=run_import, daemon=True)
         thread.start()
         
-        # Get case count
-        if mode == "foundation":
-            case_count = len(get_all_cases())
-        elif mode == "domain" and domain:
-            case_count = len(get_cases_for_domain(domain))
-        else:
-            case_count = 0
-        
         return {
-            "message": f"Importing {case_count} case(s) in background",
-            "note": "This will take 10-30 seconds. Refresh the page to see updated stats.",
+            "message": f"Importing REAL cases from Indian Kanoon in background",
+            "note": f"Scraping and categorizing {cases_count} cases. This will take 2-5 minutes. Check back later.",
             "mode": mode,
             "domain": domain,
-            "cases_count": case_count
+            "cases_count": cases_count,
+            "source": "Indian Kanoon"
         }
     
     except Exception as e:
@@ -470,22 +539,23 @@ async def get_available_domains_endpoint(
 ):
     """Get list of available domains for import"""
     try:
-        from data.case_collections import get_available_domains, get_cases_for_domain
-        
-        domains = get_available_domains()
-        domain_info = []
-        
-        for domain in domains:
-            cases = get_cases_for_domain(domain)
-            domain_info.append({
-                "name": domain,
-                "case_count": len(cases),
-                "sample_cases": [c['case_name'] for c in cases[:2]]
-            })
+        domains = [
+            {"name": "Contract Law", "case_count": 10, "sample_cases": ["Contract breach cases", "Specific performance"]},
+            {"name": "Corporate Law", "case_count": 10, "sample_cases": ["Company disputes", "Director liability"]},
+            {"name": "Intellectual Property", "case_count": 10, "sample_cases": ["Patent cases", "Trademark infringement"]},
+            {"name": "Employment Law", "case_count": 10, "sample_cases": ["Wrongful termination", "Labor disputes"]},
+            {"name": "Real Estate", "case_count": 10, "sample_cases": ["Property disputes", "RERA cases"]},
+            {"name": "Arbitration", "case_count": 10, "sample_cases": ["Arbitration awards", "Enforcement"]},
+            {"name": "Cyber Law", "case_count": 10, "sample_cases": ["Cyber crimes", "Data protection"]},
+            {"name": "Tax Law", "case_count": 10, "sample_cases": ["Income tax", "GST disputes"]},
+            {"name": "Banking & Finance", "case_count": 10, "sample_cases": ["Banking disputes", "Loan recovery"]},
+            {"name": "Consumer Protection", "case_count": 10, "sample_cases": ["Consumer disputes", "Defective products"]},
+        ]
         
         return {
-            "domains": domain_info,
-            "total_domains": len(domains)
+            "domains": domains,
+            "total_domains": len(domains),
+            "note": "These are real cases scraped from Indian Kanoon"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

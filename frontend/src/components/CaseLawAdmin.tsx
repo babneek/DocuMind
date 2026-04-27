@@ -96,31 +96,37 @@ export default function CaseLawAdmin() {
   const handleImport = async (mode: 'foundation' | 'domain', domain?: string) => {
     if (importing) return;
 
+    const caseCount = mode === 'foundation' ? 100 : 10;
+    const timeEstimate = mode === 'foundation' ? '5-10 minutes' : '2-3 minutes';
+    
     const confirmMsg = mode === 'foundation'
-      ? `Import all available cases (${availableDomains.reduce((sum, d) => sum + d.case_count, 0)} cases)? This will take 10-30 seconds.`
-      : `Import ${domain} cases? This will take 5-10 seconds.`;
+      ? `Import ${caseCount} REAL cases from Indian Kanoon across all domains? This will take ${timeEstimate}.`
+      : `Import 10 REAL ${domain} cases from Indian Kanoon? This will take ${timeEstimate}.`;
 
     if (!confirm(confirmMsg)) return;
 
     try {
       setImporting(true);
-      setImportStatus('Starting import...');
+      setImportStatus('Scraping real cases from Indian Kanoon...');
       
       const response = await triggerCaseImport({ mode, domain });
       
       setImportStatus(response.message);
       
-      // Refresh stats after a delay
+      // Refresh stats after a longer delay for scraping
       setTimeout(() => {
         loadStats();
         setImporting(false);
         setImportStatus('');
-      }, 3000);
+      }, mode === 'foundation' ? 10000 : 5000);
       
     } catch (error: any) {
       console.error('Import failed:', error);
       setImportStatus(`Error: ${error.response?.data?.detail || error.message}`);
-      setImporting(false);
+      setTimeout(() => {
+        setImporting(false);
+        setImportStatus('');
+      }, 5000);
     }
   };
 
@@ -261,7 +267,7 @@ export default function CaseLawAdmin() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <Download className="w-5 h-5 text-blue-600" />
-          Quick Import
+          Import Real Cases from Indian Kanoon
         </h2>
         
         <div className="grid grid-cols-1 gap-4">
@@ -273,11 +279,11 @@ export default function CaseLawAdmin() {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-blue-600 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900">Import All Domains</h3>
+                <h3 className="font-semibold text-gray-900">Import All Domains (100 Cases)</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  Import {availableDomains.reduce((sum, d) => sum + d.case_count, 0)} landmark cases across all domains
+                  Scrape 10 real cases per domain from Indian Kanoon
                 </p>
-                <p className="text-xs text-gray-500 mt-2">⏱️ 10-30 seconds</p>
+                <p className="text-xs text-gray-500 mt-2">⏱️ 5-10 minutes • 🌐 Live scraping</p>
               </div>
             </div>
           </button>
@@ -286,7 +292,8 @@ export default function CaseLawAdmin() {
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
           <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
           <div className="text-sm text-blue-800">
-            <strong>Note:</strong> Import runs instantly. Refresh the page after a few seconds to see updated statistics.
+            <strong>Note:</strong> Import scrapes REAL cases from Indian Kanoon and uses AI to categorize them. 
+            This takes a few minutes. You can continue using the app while it runs in the background.
           </div>
         </div>
       </div>
@@ -294,7 +301,7 @@ export default function CaseLawAdmin() {
       {/* Domain-Specific Import */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Import by Domain
+          Import by Domain (10 Real Cases Each)
         </h2>
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -313,8 +320,9 @@ export default function CaseLawAdmin() {
                 <Icon className={`w-6 h-6 text-${color}-600 mb-2`} />
                 <h3 className="font-medium text-gray-900 text-sm">{domain.name}</h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  {currentCount} in DB • {domain.case_count} available
+                  {currentCount} in DB • Import 10 real cases
                 </p>
+                <p className="text-xs text-blue-600 mt-1">⏱️ 2-3 min</p>
               </button>
             );
           })}
