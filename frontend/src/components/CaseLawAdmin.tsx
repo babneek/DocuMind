@@ -84,10 +84,15 @@ export default function CaseLawAdmin() {
     if (importing) return;
 
     const confirmMsg = mode === 'foundation'
-      ? 'Import 100 foundation cases? This will take 30-45 minutes.'
+      ? 'Import 5 landmark cases? This will take 1-2 minutes.'
       : mode === 'full'
-      ? 'Import 500+ cases? This will take 2-3 hours.'
-      : `Import ${category} cases? This will take 15-20 minutes.`;
+      ? 'Full import not supported via UI. Run locally instead.'
+      : `Category import not supported via UI. Run locally instead.`;
+
+    if (mode !== 'foundation') {
+      alert(confirmMsg + '\n\nCommand: python backend/scripts/quick_import_100_cases.py');
+      return;
+    }
 
     if (!confirm(confirmMsg)) return;
 
@@ -262,38 +267,35 @@ export default function CaseLawAdmin() {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-blue-600 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900">Foundation Import</h3>
+                <h3 className="font-semibold text-gray-900">Quick Import (UI)</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  Import 100 landmark cases across all categories
+                  Import 5 landmark cases via UI
                 </p>
-                <p className="text-xs text-gray-500 mt-2">⏱️ 30-45 minutes</p>
+                <p className="text-xs text-gray-500 mt-2">⏱️ 1-2 minutes</p>
               </div>
             </div>
           </button>
 
-          <button
-            onClick={() => handleImport('full')}
-            disabled={importing}
-            className="p-4 border-2 border-purple-200 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left"
-          >
+          <div className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50 text-left">
             <div className="flex items-start gap-3">
-              <Database className="w-6 h-6 text-purple-600 mt-1" />
+              <Database className="w-6 h-6 text-gray-400 mt-1" />
               <div>
-                <h3 className="font-semibold text-gray-900">Full Import</h3>
+                <h3 className="font-semibold text-gray-900">Full Import (Local)</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  Import 500+ cases across all domains
+                  Run locally for 100+ cases
                 </p>
-                <p className="text-xs text-gray-500 mt-2">⏱️ 2-3 hours</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  Command: <code className="bg-gray-200 px-1 rounded">python backend/scripts/quick_import_100_cases.py</code>
+                </p>
               </div>
             </div>
-          </button>
+          </div>
         </div>
 
-        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
-          <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
-          <div className="text-sm text-yellow-800">
-            <strong>Note:</strong> Import runs in the background. You can continue using the app.
-            Check back later to see updated statistics.
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
+          <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+          <div className="text-sm text-blue-800">
+            <strong>Note:</strong> UI import adds 5 cases quickly. For 100+ cases, run the import script locally and push to git.
           </div>
         </div>
       </div>

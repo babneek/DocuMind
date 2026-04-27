@@ -12,7 +12,15 @@ import time
 from typing import List, Dict, Any
 from datetime import datetime
 
+# Import scrapers with correct path
 from scrapers.indian_kanoon_scraper import IndianKanoonScraper
+
+# Import services - use absolute imports
+import sys
+from pathlib import Path
+backend_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(backend_dir))
+
 from services.case_law_service import get_case_law_service
 from services.case_categorizer import get_case_categorizer
 

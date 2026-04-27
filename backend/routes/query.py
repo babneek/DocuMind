@@ -373,38 +373,57 @@ async def trigger_case_import(
     ADMIN ONLY: Trigger case law import on the server
     
     Modes:
-    - foundation: Import 100 landmark cases (~30-45 min)
-    - full: Import 500+ cases (~2-3 hours)
-    - category: Import specific category
+    - foundation: Import 5 landmark cases (quick, works on Render)
+    - full: Not supported on Render (use local import)
+    - category: Not supported on Render (use local import)
     
-    WARNING: This is a long-running operation. Use with caution.
+    For 100+ cases, run locally and push to git:
+      python backend/scripts/quick_import_100_cases.py
+      git add backend/case_law_db/
+      git commit -m "Add cases"
+      git push
     """
     try:
-        # Import here to avoid loading heavy dependencies on startup
-        from scripts.bulk_import_cases import BulkCaseImporter
+        if mode != "foundation":
+            return {
+                "message": "Only foundation mode (5 cases) is supported via UI",
+                "note": "For 100+ cases, run locally: python backend/scripts/quick_import_100_cases.py",
+                "mode": mode
+            }
+        
+        # Import the simple populate script
+        import sys
+        from pathlib import Path
+        backend_dir = Path(__file__).parent.parent
+        sys.path.insert(0, str(backend_dir))
+        
+        from scripts.populate_case_law import populate_database
         import threading
         
         def run_import():
             """Run import in background"""
-            importer = BulkCaseImporter()
-            
-            if mode == "foundation":
-                importer.import_foundation_cases()
-            elif mode == "full":
-                importer.import_all_categories(cases_per_query=5)
-            elif mode == "category" and category:
-                importer.import_category(category, cases_per_query=10)
+            try:
+                print("Starting foundation case import...")
+                populate_database()
+                print("Foundation import complete!")
+            except Exception as e:
+                import traceback
+                print(f"Import error: {str(e)}")
+                print(traceback.format_exc())
         
         # Start import in background thread
         thread = threading.Thread(target=run_import, daemon=True)
         thread.start()
         
         return {
-            "message": f"Case import started in background (mode: {mode})",
-            "note": "This will take 30-45 minutes for foundation mode. Check logs for progress.",
+            "message": "Importing 5 landmark cases in background",
+            "note": "This will take 1-2 minutes. Refresh the page to see updated stats.",
             "mode": mode,
-            "category": category if category else None
+            "cases_count": 5
         }
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to start import: {str(e)}")
+        import traceback
+        error_detail = f"Failed to start import: {str(e)}\n{traceback.format_exc()}"
+        print(error_detail)
+        raise HTTPException(status_code=500, detail=str(e))
