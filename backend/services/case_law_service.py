@@ -48,13 +48,18 @@ class CaseLawService:
                 - court: str (e.g., "Supreme Court of India")
                 - date: str (YYYY-MM-DD)
                 - judges: List[str]
+                - category: str (e.g., "Contract Law", "Corporate Law") [NEW]
+                - subcategory: str (e.g., "Software Contracts") [NEW]
                 - legal_areas: List[str] (e.g., ["Contract Law", "Arbitration"])
+                - jurisdiction: str (e.g., "India") [NEW]
+                - importance: str ("Landmark"/"Important"/"Regular") [NEW]
                 - facts: str (summary of facts)
                 - issues: List[str] (legal issues addressed)
                 - holdings: List[str] (court's decisions)
                 - reasoning: str (court's reasoning)
                 - precedents_cited: List[str] (cases cited)
                 - full_text: str (complete judgment text)
+                - source: str (e.g., "Indian Kanoon", "Manual") [NEW]
         
         Returns:
             case_id: Unique identifier for the case
@@ -91,11 +96,16 @@ class CaseLawService:
                     "citation": case_data.get('citation', ''),
                     "court": case_data.get('court', ''),
                     "date": case_data.get('date', ''),
+                    "category": case_data.get('category', 'General'),
+                    "subcategory": case_data.get('subcategory', ''),
+                    "jurisdiction": case_data.get('jurisdiction', 'India'),
+                    "importance": case_data.get('importance', 'Regular'),
                     "judges": json.dumps(case_data.get('judges', [])),
                     "legal_areas": json.dumps(case_data.get('legal_areas', [])),
                     "issues": json.dumps(case_data.get('issues', [])),
                     "holdings": json.dumps(case_data.get('holdings', [])),
                     "precedents_cited": json.dumps(case_data.get('precedents_cited', [])),
+                    "source": case_data.get('source', 'Manual'),
                     "full_text_length": len(case_data.get('full_text', ''))
                 }]
             )
@@ -118,6 +128,8 @@ class CaseLawService:
         query: str,
         legal_area: Optional[str] = None,
         court: Optional[str] = None,
+        category: Optional[str] = None,
+        importance: Optional[str] = None,
         top_k: int = 5
     ) -> List[Dict[str, Any]]:
         """
@@ -127,6 +139,8 @@ class CaseLawService:
             query: Natural language query or legal issue
             legal_area: Filter by legal area (e.g., "Contract Law")
             court: Filter by court (e.g., "Supreme Court of India")
+            category: Filter by category (e.g., "Contract Law", "Corporate Law")
+            importance: Filter by importance ("Landmark", "Important", "Regular")
             top_k: Number of results to return
         
         Returns:
@@ -140,11 +154,15 @@ class CaseLawService:
             where_filter = None
             if court:
                 where_filter = {"court": court}
+            elif category:
+                where_filter = {"category": category}
+            elif importance:
+                where_filter = {"importance": importance}
             
             # Search
             results = self.collection.query(
                 query_embeddings=[query_embedding],
-                n_results=top_k,
+                n_results=top_k * 2,  # Get more for post-filtering
                 where=where_filter
             )
             
@@ -155,7 +173,7 @@ class CaseLawService:
                 metadata = results['metadatas'][0][i]
                 distance = results['distances'][0][i]
                 
-                # Filter by legal area in post-processing (since ChromaDB doesn't support $contains)
+                # Filter by legal area in post-processing
                 if legal_area:
                     legal_areas = json.loads(metadata.get('legal_areas', '[]'))
                     if legal_area not in legal_areas:
@@ -174,13 +192,19 @@ class CaseLawService:
                     "citation": metadata['citation'],
                     "court": metadata['court'],
                     "date": metadata['date'],
+                    "category": metadata.get('category', 'General'),
+                    "subcategory": metadata.get('subcategory', ''),
+                    "importance": metadata.get('importance', 'Regular'),
                     "legal_areas": json.loads(metadata['legal_areas']),
                     "issues": json.loads(metadata['issues']),
                     "holdings": json.loads(metadata['holdings']),
-                    "relevance_score": 1 - distance,  # Convert distance to similarity
+                    "relevance_score": 1 - distance,
                     "excerpt": results['documents'][0][i][:500] + "...",
-                    "full_case_data": full_case_data  # Include for detailed analysis
+                    "full_case_data": full_case_data
                 })
+                
+                if len(cases) >= top_k:
+                    break
             
             logger.info(f"Found {len(cases)} relevant cases for query: {query[:50]}...")
             return cases
@@ -229,21 +253,60 @@ class CaseLawService:
             
             courts = set()
             legal_areas = set()
+            categories = {}
+            importance_counts = {"Landmark": 0, "Important": 0, "Regular": 0}
             
             for metadata in all_cases['metadatas']:
                 courts.add(metadata.get('court', 'Unknown'))
                 areas = json.loads(metadata.get('legal_areas', '[]'))
                 legal_areas.update(areas)
+                
+                # Count by category
+                category = metadata.get('category', 'General')
+                categories[category] = categories.get(category, 0) + 1
+                
+                # Count by importance
+                importance = metadata.get('importance', 'Regular')
+                importance_counts[importance] = importance_counts.get(importance, 0) + 1
             
             return {
                 "total_cases": count,
                 "courts": list(courts),
                 "legal_areas": list(legal_areas),
+                "categories": categories,
+                "importance_distribution": importance_counts,
                 "last_updated": datetime.now().isoformat()
             }
         except Exception as e:
             logger.error(f"Error getting database stats: {str(e)}")
             return {"total_cases": 0, "error": str(e)}
+    
+    def is_duplicate(self, case_name: str, citation: str) -> bool:
+        """Check if a case already exists in the database"""
+        try:
+            # Search by citation (most reliable)
+            if citation:
+                results = self.collection.get(
+                    where={"citation": citation}
+                )
+                if results['ids']:
+                    return True
+            
+            # Search by case name similarity
+            if case_name:
+                results = self.collection.query(
+                    query_embeddings=[self.embedding_model.encode(case_name).tolist()],
+                    n_results=1
+                )
+                if results['ids'] and results['ids'][0]:
+                    # Check if very similar (distance < 0.1)
+                    if results['distances'][0][0] < 0.1:
+                        return True
+            
+            return False
+        except Exception as e:
+            logger.error(f"Error checking duplicate: {str(e)}")
+            return False
 
 
 # Singleton instance
